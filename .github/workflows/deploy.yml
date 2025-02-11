@@ -8,12 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Build and Deploy
+      
+      - name: Ensure Public Folder Exists
+        run: mkdir -p public
+        
+      - name: Copy Files to Root
         run: |
-          mkdir public
-          cp -r * public
-          mv public/* .
+          cp -r public/* . || echo "No public directory found, skipping copy"
           rm -rf public
+
       - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
