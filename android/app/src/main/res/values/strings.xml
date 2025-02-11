@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Let Me Rest</string>
+    <string name="title_activity_main">Let Me Rest</string>
+    <string name="package_name">com.kengomatsuo.letmerest</string>
+    <string name="custom_url_scheme">com.kengomatsuo.letmerest</string>
+</resources>
