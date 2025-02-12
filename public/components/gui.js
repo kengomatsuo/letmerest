@@ -16,7 +16,8 @@ export function createGUI(scene) {
         fullscreenButton.setText("🔳 Fullscreen");
       }
     })
-    .setScrollFactor(0);
+    .setScrollFactor(0)
+    .setDepth(100);
 
   // Create a pause button
   let pauseButton = scene.add
@@ -31,14 +32,15 @@ export function createGUI(scene) {
         pauseButton.setText("▶️ Resume");
       }
     })
-    .setScrollFactor(0);
+    .setScrollFactor(0)
+    .setDepth(100);
 
   // Hide the cursor
   scene.input.setDefaultCursor("none");
   // Create a crosshair sprite
   let crosshair = scene.add
     .image(0, 0, "crosshair")
-    .setDepth(10)
+    .setDepth(101)
     .setScale(0.5)
     .setScrollFactor(0);
   crosshair.setOrigin(0.5);

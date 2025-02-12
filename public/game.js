@@ -48,6 +48,7 @@ let player;
 let cursors;
 let wasd;
 let bullets;
+let enemies;
 
 function create() {
   registerScene(this);
@@ -60,6 +61,17 @@ function create() {
 
   // Camera
   this.cameras.main.startFollow(player);
+
+  // Enemies
+  enemies = this.physics.add.group();
+
+  let enemySpawnTimer = this.time.addEvent({
+    delay: 2000, // Spawn every 2 seconds
+    callback: spawnEnemy,
+    callbackScope: this,
+    loop: true,
+  });
+  registerTimer(enemySpawnTimer);
 
   // Projectiles
   bullets = this.physics.add.group({
@@ -87,7 +99,22 @@ function create() {
     left: Phaser.Input.Keyboard.KeyCodes.A,
     right: Phaser.Input.Keyboard.KeyCodes.D,
   });
+
+  // Collision
+  this.physics.add.collider(player, enemies);
 }
+
+function spawnEnemy() {
+  const angle = Phaser.Math.FloatBetween(0, Math.PI * 2); // Random angle in radians
+  const spawnX = player.x + Math.cos(angle) * 900;
+  const spawnY = player.y + Math.sin(angle) * 900;
+
+  let enemy = enemies.create(spawnX, spawnY, "enemy");
+  enemy.setActive(true);
+  enemy.setVisible(true);
+  enemy.setCollideWorldBounds(true);
+}
+
 
 function shootBullet() {
   const bullet = bullets.get(player.x, player.y);
@@ -155,4 +182,11 @@ function update(time, delta) {
 
   floor.tilePositionX += velocityX/75
   floor.tilePositionY += velocityY/75
+
+  // Update enemies' velocities to chase the player
+  enemies.children.iterate(function (enemy) {
+    if (enemy.active) {
+      this.physics.moveToObject(enemy, player, 100);
+    }
+  }, this);
 }
