@@ -1,13 +1,22 @@
+import { createGUI } from "./gui.js";
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
+  dom: {
+    createContainer: true,
+  },
   physics: {
     default: "arcade",
     arcade: {
       debug: false,
       gravity: { y: 0 },
     },
+  },
+  scale: {
+    mode: Phaser.Scale.EXPAND,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
   },
   scene: {
     preload: preload,
@@ -25,29 +34,19 @@ function preload() {
   this.load.image("background", "assets/background.jpg");
 }
 
+let background
+let player
+let cursors
+
 function create() {
-  // Set world size larger than screen
-
   // Create a repeating background
-  background = this.add.tileSprite(0, 0, 800, 600, "background");
-
+  background = this.add.tileSprite(0, 0, 2000, 2000, "background");
   player = this.physics.add.image(400, 300, "player");
 
   this.cameras.main.startFollow(player);
 
-  // Fullscreen button
-  let fullscreenButton = this.add
-    .text(20, 20, "🔳 Fullscreen", { fontSize: "20px", fill: "#fff" })
-    .setInteractive()
-    .on("pointerdown", () => {
-      if (!this.scale.isFullscreen) {
-        this.scale.startFullscreen();
-        fullscreenButton.setText("❌ Exit Fullscreen");
-      } else {
-        this.scale.stopFullscreen();
-        fullscreenButton.setText("🔳 Fullscreen");
-      }
-    }).setScrollFactor(0)
+  // Add GUI elements
+  createGUI(this); 
 
   cursors = this.input.keyboard.createCursorKeys();
 }
