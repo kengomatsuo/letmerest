@@ -1,9 +1,10 @@
+/// <reference types="phaser" />
 import { registerScene, registerTimer } from "./components/gameManager.js"
 import { createGUI } from "./components/gui.js";
 
 const config = {
   type: Phaser.AUTO,
-  width: 800,
+  width: 900,
   height: 600,
   dom: {
     createContainer: true,
@@ -17,8 +18,9 @@ const config = {
     },
   },
   scale: {
-    mode: Phaser.Scale.EXPAND,
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
+
   },
   scene: {
     preload: preload,
@@ -49,13 +51,12 @@ let bullets;
 
 function create() {
   registerScene(this);
-
   // Background
-  floor = this.add.tileSprite(400, 300, 800, 600, "floor");
-
+  floor = this.add.tileSprite(450, 300, 1920, 1080, "floor");
+  floor.setScrollFactor(0);
+  
   // Player
   player = this.physics.add.image(400, 300, "player");
-  player.setDamping(true).setDrag(200).setMaxVelocity(160);
 
   // Camera
   this.cameras.main.startFollow(player);
@@ -106,7 +107,6 @@ function shootBullet() {
       worldPoint.x,
       worldPoint.y
     );
-    console.log(worldPoint.x, worldPoint.y);
     this.physics.velocityFromRotation(angle, 300, bullet.body.velocity);
 
     bullet.setRotation(angle);
@@ -121,23 +121,38 @@ function shootBullet() {
   }
 }
 
+const speed = 160;
+const diagonalSpeed = speed * Math.sqrt(2) / 2;
+// let scrollFactor = 30;
 
+function update(time, delta) {
+  // Prevent player movement when the game is paused
+  if (this.physics.world.isPaused) return;
 
-function update() {
+  
+  let velocityX = 0;
+  let velocityY = 0;
 
   if (cursors.left.isDown || wasd.left.isDown) {
-    player.setVelocityX(-160);
+    velocityX = -speed;
   } else if (cursors.right.isDown || wasd.right.isDown) {
-    player.setVelocityX(160);
-  } else {
-    player.setVelocityX(0);
+    velocityX = speed;
   }
 
   if (cursors.up.isDown || wasd.up.isDown) {
-    player.setVelocityY(-160);
+    velocityY = -speed;
   } else if (cursors.down.isDown || wasd.down.isDown) {
-    player.setVelocityY(160);
-  } else {
-    player.setVelocityY(0);
+    velocityY = speed;
   }
+
+  // Normalize diagonal movement
+  if (velocityX !== 0 && velocityY !== 0) {
+    velocityX = velocityX > 0 ? diagonalSpeed : -diagonalSpeed;
+    velocityY = velocityY > 0 ? diagonalSpeed : -diagonalSpeed;
+  }
+
+  player.setVelocity(velocityX, velocityY);
+
+  floor.tilePositionX += velocityX/75
+  floor.tilePositionY += velocityY/75
 }
