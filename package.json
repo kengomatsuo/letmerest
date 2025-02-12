@@ -23,7 +23,7 @@
     "@capacitor/cli": "^7.0.1",
     "@capacitor/core": "^7.0.1",
     "@capacitor/ios": "^7.0.1",
-    "phaser": "^3.87.0"
+    "phaser": "^3.88.0"
   },
   "devDependencies": {
     "electron": "^34.1.1"
