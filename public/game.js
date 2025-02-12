@@ -1,4 +1,5 @@
-import { createGUI } from "./gui.js";
+import { registerScene, registerTimer } from "./components/gameManager.js"
+import { createGUI } from "./components/gui.js";
 
 const config = {
   type: Phaser.AUTO,
@@ -47,6 +48,8 @@ let wasd;
 let bullets;
 
 function create() {
+  registerScene(this);
+
   // Background
   floor = this.add.tileSprite(400, 300, 800, 600, "floor");
 
@@ -64,12 +67,13 @@ function create() {
     runChildUpdate: true,
   });
 
-  this.time.addEvent({
+  let bulletTimer = this.time.addEvent({
     delay: 1000,
     callback: shootBullet,
     callbackScope: this,
     loop: true,
   });
+  registerTimer(bulletTimer);
 
   // Add GUI elements
   createGUI(this);
@@ -108,15 +112,19 @@ function shootBullet() {
     bullet.setRotation(angle);
 
     // Schedule despawn after estimated travel time
-    this.time.delayedCall(2000, () => {
+    let bulletDespawnTimer = this.time.delayedCall(2000, () => {
       bullet.setActive(false);
       bullet.setVisible(false);
       bullet.body.enable = false;
     }); // Adjust based on bullet speed and max distance
+    registerTimer(bulletDespawnTimer);
   }
 }
 
+
+
 function update() {
+
   if (cursors.left.isDown || wasd.left.isDown) {
     player.setVelocityX(-160);
   } else if (cursors.right.isDown || wasd.right.isDown) {

@@ -1,4 +1,8 @@
+import { pauseGame, resumeGame } from "./gameManager.js"
+
+
 export function createGUI(scene) {
+  
   // Create a fullscreen button
   let fullscreenButton = scene.add
     .text(20, 20, "🔳 Fullscreen", { fontSize: "20px", fill: "#fff" })
@@ -20,10 +24,10 @@ export function createGUI(scene) {
     .setInteractive()
     .on("pointerdown", () => {
       if (scene.physics.world.isPaused) {
-        scene.physics.world.resume();
+        resumeGame()
         pauseButton.setText("⏸ Pause");
       } else {
-        scene.physics.world.pause();
+        pauseGame()
         pauseButton.setText("▶️ Resume");
       }
     })
