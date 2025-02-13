@@ -8,7 +8,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.health = 50;
 
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
-      scene.registry.events.emit("update-health", -10);
+      scene.registry.events.emit("update-health", -1);
     });
   }
 
@@ -38,6 +38,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       .setOrigin(0.5);
 
     this.setVisible(false); // Hide enemy
+    this.body.enable = false; // Disable physics
 
     this.scene.time.delayedCall(500, () => {
       text.destroy(); // Remove text

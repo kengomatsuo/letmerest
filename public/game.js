@@ -6,7 +6,13 @@ const config = {
     width: 800,
     height: 600,
     scene: [MainScene, GUI],
-    physics: { default: 'arcade', arcade: { debug: false } }
+    physics: {
+        default: 'arcade',
+        arcade: { 
+            debug: false,
+            fps: 60 // Set physics FPS limit
+        }
+    }
 };
 
 const game = new Phaser.Game(config);
