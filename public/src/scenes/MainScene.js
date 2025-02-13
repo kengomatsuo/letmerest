@@ -18,6 +18,8 @@ class MainScene extends Phaser.Scene {
         
         this.cursors = this.input.keyboard.createCursorKeys();
         this.enemies = this.physics.add.group();
+
+        this.scene.get('GUI').setPlayer(this.player);
         
         // Create enemies every 2 seconds
         this.time.addEvent({

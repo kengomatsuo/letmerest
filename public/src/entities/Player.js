@@ -6,6 +6,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
+    this.health = 100;
+    this.shield = 0;
+
     this.setCollideWorldBounds(false);
     this.speed = 200;
     this.projectiles = scene.add.group();
@@ -52,7 +55,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // Normalize diagonal movement
     if (moveX !== 0 || moveY !== 0) {
       const angle = Math.atan2(moveY, moveX);
-      this.setVelocity(Math.cos(angle) * this.speed, Math.sin(angle) * this.speed);
+      this.setVelocity(
+        Math.cos(angle) * this.speed,
+        Math.sin(angle) * this.speed
+      );
     } else {
       this.setVelocity(0);
     }
@@ -65,8 +71,34 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.joystick.worldX,
         this.joystick.worldY
       );
-      this.setVelocity(Math.cos(angle) * this.speed, Math.sin(angle) * this.speed);
+      this.setVelocity(
+        Math.cos(angle) * this.speed,
+        Math.sin(angle) * this.speed
+      );
     }
+  }
+
+  takeDamage(amount) {
+    if (this.damageCooldown) return;
+
+    this.health = Math.max(this.health - amount, 0);
+    console.log(this.health);
+    if (this.health == 0) {
+      this.die();
+    }
+
+    this.damageCooldown = true;
+    this.scene.time.delayedCall(100, () => {
+      this.damageCooldown = false;
+    });
+  }
+
+  heal(amount) {
+    this.health = Math.min(this.health + amount, 100);
+  }
+
+  die() {
+    this.scene.registry.events.emit("game-over");
   }
 
   startShooting() {
@@ -82,7 +114,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
   shoot() {
     const pointer = this.scene.input.activePointer;
-    const projectile = new Projectile(this.scene, this.x, this.y, pointer.worldX, pointer.worldY);
+    const projectile = new Projectile(
+      this.scene,
+      this.x,
+      this.y,
+      pointer.worldX,
+      pointer.worldY
+    );
     this.projectiles.add(projectile);
   }
 

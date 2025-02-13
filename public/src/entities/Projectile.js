@@ -5,8 +5,11 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
 
     this.speed = 300;
-    this.lifespan = 2000; // 1 second before disappearing
-    this.damage = 20; // Damage dealt on collision
+    this.lifespan = 2000; 
+    this.pierce = 1;
+    this.damage = 20; 
+
+    this.hitEnemies = new Set(); 
 
     // Calculate velocity to move toward target
     const angle = Phaser.Math.Angle.Between(x, y, targetX, targetY);
@@ -22,8 +25,12 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     // Handle collision with enemies
     scene.physics.add.overlap(this, scene.enemies, (projectile, enemy) => {
-      enemy.takeDamage(this.damage); // Deal 20 damage
-      projectile.destroy(); // Remove projectile on impact
+      if (!this.hitEnemies.has(enemy)) {
+        this.hitEnemies.add(enemy);
+        enemy.takeDamage(this.damage); 
+        if (this.pierce == 0) this.destroy(); 
+        this.pierce--;
+      }
     });
   }
 }

@@ -8,7 +8,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.health = 50;
 
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
-      scene.registry.events.emit("update-health", -1);
+      player.takeDamage(1);
     });
   }
 
@@ -22,7 +22,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
   takeDamage(amount) {
     this.health -= amount;
-    console.log(this.health);
     if (this.health <= 0) {
       this.die();
     }
