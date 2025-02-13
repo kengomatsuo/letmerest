@@ -37,6 +37,7 @@ export function createGUI(scene) {
 
   // Hide the cursor
   scene.input.setDefaultCursor("none");
+
   // Create a crosshair sprite
   let crosshair = scene.add
     .image(0, 0, "crosshair")
@@ -44,8 +45,15 @@ export function createGUI(scene) {
     .setScale(0.5)
     .setScrollFactor(0);
   crosshair.setOrigin(0.5);
+
   // Update the crosshair position on pointer move
   scene.input.on("pointermove", (pointer) => {
     crosshair.setPosition(pointer.x, pointer.y);
+  });
+
+  // Update GUI positions on window resize
+  window.addEventListener('resize', () => {
+    fullscreenButton.setPosition(20, 20);
+    pauseButton.setPosition(20, 60);
   });
 }
