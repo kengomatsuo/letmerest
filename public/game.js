@@ -1,5 +1,5 @@
 /// <reference types="phaser" />
-import { registerScene, registerTimer } from "./components/gameManager.js"
+import { registerScene, registerTimer } from "./components/gameManager.js";
 import { createGUI } from "./components/gui.js";
 
 const config = {
@@ -14,13 +14,12 @@ const config = {
     arcade: {
       debug: false,
       gravity: { y: 0 },
-      fps: 30,
+      fps: 60,
     },
   },
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-
   },
   scene: {
     preload: preload,
@@ -28,11 +27,26 @@ const config = {
     update: update,
   },
   fps: {
-    target: 30,
+    target: 60,
   },
 };
 
-var game = new Phaser.Game(config);
+const game = new Phaser.Game(config);
+
+const onChangeScreen = () => {
+  game.scale.resize(window.innerWidth, window.innerHeight);
+  floor.setSize(window.innerWidth, window.innerHeight);
+};
+
+const _orientation =
+  screen.orientation || screen.mozOrientation || screen.msOrientation;
+_orientation.addEventListener("change", () => {
+  onChangeScreen();
+});
+
+window.addEventListener("resize", () => {
+  onChangeScreen();
+});
 
 function preload() {
   this.load.image("player", "assets/player.png");
@@ -50,14 +64,19 @@ let wasd;
 let bullets;
 let enemies;
 
+const screenWidth = screen.width;
+const screenHeight = screen.height;
+
 function create() {
   registerScene(this);
-  // Background
-  floor = this.add.tileSprite(450, 300, 1920, 1080, "floor");
-  floor.setScrollFactor(0);
-  
+
+  // Background (infinite scrolling effect)
+  floor = this.add.tileSprite(0, 0, screenWidth, screenHeight, "floor");
+  floor.setOrigin(0, 0);
+  floor.setScrollFactor(0); // Prevents it from moving with camera
+
   // Player
-  player = this.physics.add.image(400, 300, "player");
+  player = this.physics.add.image(450, 300, "player");
 
   // Camera
   this.cameras.main.startFollow(player);
@@ -100,8 +119,8 @@ function create() {
     right: Phaser.Input.Keyboard.KeyCodes.D,
   });
 
-  // Collision
-  this.physics.add.collider(player, enemies);
+  // Overlap
+  this.physics.add.overlap(bullets, enemies, bulletHitEnemy, null, this);
 }
 
 function spawnEnemy() {
@@ -112,9 +131,11 @@ function spawnEnemy() {
   let enemy = enemies.create(spawnX, spawnY, "enemy");
   enemy.setActive(true);
   enemy.setVisible(true);
-  enemy.setCollideWorldBounds(true);
+  enemy.health = 50
+  enemy.setData("health", 50);
+  console.log("Spawned enemy:", enemy);
+  console.log("Enemy health on spawn:", enemy.getData("health"));
 }
-
 
 function shootBullet() {
   const bullet = bullets.get(player.x, player.y);
@@ -148,15 +169,40 @@ function shootBullet() {
   }
 }
 
+// Add this function to handle bullet and enemy collision
+function bulletHitEnemy(enemy, bullet) {
+  console.log('Bullet hit enemy:', enemy, bullet);
+  if (!bullet.active) return; // Ensure the bullet only affects an enemy once
+
+  bullet.setActive(false);
+  bullet.setVisible(false);
+  bullet.body.enable = false;
+
+  let health = enemy.getData("health"); // Get health safely
+  if (health === undefined) {
+    console.error("Enemy health is undefined!"); // Debugging
+    return;
+  }
+
+  health -= 20; // Reduce health
+  enemy.setData("health", health); // Update health
+
+  console.log("Enemy health after hit:", health); // Debugging
+
+  if (enemy.health <= 0) {
+    enemy.setActive(false);
+    enemy.setVisible(false);
+  }
+}
+
 const speed = 160;
-const diagonalSpeed = speed * Math.sqrt(2) / 2;
+const diagonalSpeed = (speed * Math.sqrt(2)) / 2;
 // let scrollFactor = 30;
 
 function update(time, delta) {
   // Prevent player movement when the game is paused
   if (this.physics.world.isPaused) return;
 
-  
   let velocityX = 0;
   let velocityY = 0;
 
@@ -180,8 +226,8 @@ function update(time, delta) {
 
   player.setVelocity(velocityX, velocityY);
 
-  floor.tilePositionX += velocityX/75
-  floor.tilePositionY += velocityY/75
+  floor.tilePositionX += velocityX / 75;
+  floor.tilePositionY += velocityY / 75;
 
   // Update enemies' velocities to chase the player
   enemies.children.iterate(function (enemy) {
