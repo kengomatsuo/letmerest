@@ -22,7 +22,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       return;
     }
     // Acceleration
-    if (this.speed != this.maxSpeed) this.speed += this.acceleration;
+    if (this.speed != this.maxSpeed)
+      this.speed = Math.min(this.maxSpeed, this.speed + this.acceleration);
 
     this.scene.physics.moveToObject(this, player, this.speed);
   }
