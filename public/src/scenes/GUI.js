@@ -40,16 +40,23 @@ class GUI extends Phaser.Scene {
     });
 
     this.registry.events.on("game-over", () => {
-      this.scene.pause();
       this.healthBar.clear();
       this.healthBar.fillStyle(0x00ff00, 1);
       this.healthBar.fillRect(10, 40, 0, 15);
       this.healthText.setText("0");
-      this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, "Game Over", {
-        fontSize: "40px",
-        fill: "#f00",
-      }).setOrigin(0.5);
-    })
+
+      this.add
+        .text(
+          this.cameras.main.centerX,
+          this.cameras.main.centerY,
+          "Game Over",
+          {
+            fontSize: "40px",
+            fill: "#f00",
+          }
+        )
+        .setOrigin(0.5);
+    });
   }
 
   setPlayer(player) {
@@ -61,8 +68,8 @@ class GUI extends Phaser.Scene {
     this.fpsText.setText(`FPS: ${fps}`);
 
     if (this.player) {
-      const health = Math.max(this.player.health, 0); 
-      const barWidth = (health / 100) * 100; 
+      const health = Math.max(this.player.health, 0);
+      const barWidth = (health / 100) * 100;
 
       // Clear old health bar
       this.healthBar.clear();

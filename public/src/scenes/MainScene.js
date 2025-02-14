@@ -25,11 +25,43 @@ class MainScene extends Phaser.Scene {
         this.time.addEvent({
             delay: 2000,
             callback: () => {
-                const enemy = new Enemy(this, Phaser.Math.Between(50, 750), Phaser.Math.Between(50, 550));
+                // Get player's position
+                const playerX = this.player.x;
+                const playerY = this.player.y;
+        
+                // Pick a random angle in radians (0 to 2π)
+                const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+        
+                // Calculate spawn position 1000 pixels away
+                const spawnX = playerX + Math.cos(angle) * 1000;
+                const spawnY = playerY + Math.sin(angle) * 1000;
+        
+                // Create and add the enemy
+                const enemy = new Enemy(this, spawnX, spawnY);
                 this.enemies.add(enemy);
             },
             loop: true
         });
+
+        this.registry.events.on("game-over", () => {
+            // Stop all timers and physics
+            this.physics.pause();
+            this.time.removeAllEvents();
+            
+            // Stop player
+            if (this.player) {
+                this.player.setVelocity(0);
+                this.player.setActive(false);
+                this.player.body.enable = false;
+            }
+        
+            // Stop enemies
+            this.enemies.children.iterate((enemy) => {
+                enemy.setVelocity(0);
+                enemy.setActive(false);
+                enemy.body.enable = false;
+            });
+        });        
     }
 
     update() {

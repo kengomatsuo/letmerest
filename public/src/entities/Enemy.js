@@ -14,6 +14,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
       player.takeDamage(this.damage);
     });
+
+    scene.physics.add.collider(this, scene.enemies);
   }
 
   chasePlayer(player) {
@@ -46,6 +48,8 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   die() {
+    this.scene.registry.events.emit("update-score", 10);
+
     const text = this.scene.add
       .text(this.x, this.y, "Done!", {
         fontSize: "16px",
