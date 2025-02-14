@@ -17,6 +17,10 @@ class GUI extends Phaser.Scene {
       fill: "#0f0",
     });
 
+    this.input.keyboard.on("keydown-ESC", () => {
+      this.registry.events.emit("pause-game");
+    });
+
     // Health bar background (red)
     this.healthBarBg = this.add.graphics();
     this.healthBarBg.fillStyle(0x800000, 1); // Dark red

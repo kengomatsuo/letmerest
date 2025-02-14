@@ -43,6 +43,17 @@ class MainScene extends Phaser.Scene {
             loop: true
         });
 
+        this.registry.events.on("pause-game", () => {
+            this.physics.pause();
+            this.time.paused = true;
+            this.scene.launch("PauseMenu");
+        });
+
+        this.registry.events.on("resume-game", () => {
+            this.physics.resume();
+            this.time.paused = false;
+        });
+
         this.registry.events.on("game-over", () => {
             // Stop all timers and physics
             this.physics.pause();
