@@ -3,6 +3,10 @@ class GUI extends Phaser.Scene {
     super({ key: "GUI", active: false });
   }
 
+  preload() {
+    // Load assets
+  }
+
   create() {
     this.createUI();
 
@@ -17,6 +21,10 @@ class GUI extends Phaser.Scene {
 
     this.score = 0;
     this.player = null;
+
+    window.addEventListener("blur", () => {
+      this.registry.events.emit("pause-game");
+    });
 
     this.input.keyboard.on("keydown-ESC", () => {
       this.registry.events.emit("pause-game");

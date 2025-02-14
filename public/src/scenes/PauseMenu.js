@@ -88,6 +88,7 @@ class PauseMenu extends Phaser.Scene {
   }
 
   quitToMainMenu() {
+    this.registry.events.emit("pause-game");
     this.scene.stop("MainScene");
     this.scene.stop("GUI");
     this.scene.start("MainMenu");

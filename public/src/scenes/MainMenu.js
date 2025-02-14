@@ -1,14 +1,16 @@
 class MainMenu extends Phaser.Scene {
   constructor() {
     super({ key: "MainMenu" });
-    this.isMusicPlaying = false;
-  }
-
-  preload() {
-    this.load.audio("bgm", "assets/music/Hectic_bass_drums_cut.ogg");
+    this.isMusicPlaying = true;
   }
 
   create() {
+    if (!this.scene.isActive("AudioManager")) {
+      this.scene.launch("AudioManager");
+    }
+
+    this.audioManager = this.scene.get("AudioManager"); // Get AudioManager scene
+    console.log(this.audioManager)
     this.createUI();
 
     // Listen for window resize and adjust UI elements
@@ -27,67 +29,78 @@ class MainMenu extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    // Speaker button
-    this.speakerButton = this.add
-      .text(
-        centerX,
-        centerY,
-        this.isMusicPlaying ? "Sound: on" : "Sound: off",
-        { fontSize: "32px", fill: "#fff" }
-      )
-      .setOrigin(0.5)
-      .setInteractive();
-
-    // Start Game button
-    this.startButton = this.add
-      .text(centerX, centerY + 60, "Start Game", {
+    this.continueText = this.add
+      .text(centerX, centerY + 60, "Click anywhere to continue", {
         fontSize: "32px",
-        fill: "#0f0",
+        fill: "#ccc",
       })
-      .setOrigin(0.5)
-      .setInteractive();
+      .setOrigin(0.5);
 
-    // Quit Game button
-    this.quitButton = this.add
-      .text(centerX, centerY + 120, "Quit Game", {
-        fontSize: "32px",
-        fill: "#f00",
-      })
-      .setOrigin(0.5)
-      .setInteractive();
+    // Listener for clicking anywhere to continue
 
-    // Toggle music when clicked
-    this.speakerButton.on("pointerdown", () => {
-      if (!this.music) {
-        this.music = this.sound.add("bgm", { loop: true, volume: 0.5 });
-      }
-      if (!this.isMusicPlaying) {
-        this.music.play();
-        this.speakerButton.setText("Sound: on");
-      } else {
-        this.music.pause();
-        this.speakerButton.setText("Sound: off");
-      }
-      this.isMusicPlaying = !this.isMusicPlaying;
-    });
+    this.input.once("pointerdown", () => {
+      this.continueText.destroy();
+      this.audioManager.playMusic("mainMenuBgm");
 
-    // Start game when clicked
-    this.startButton.on("pointerdown", () => {
-      this.scene.stop("MainScene");
-      this.scene.stop("GUI");
-      this.scene.start("GUI");
-      this.scene.start("MainScene");
+      // Speaker button
+      this.speakerButton = this.add
+        .text(
+          centerX,
+          centerY,
+          this.isMusicPlaying ? "Sound: on" : "Sound: off",
+          { fontSize: "32px", fill: "#fff" }
+        )
+        .setOrigin(0.5)
+        .setInteractive();
 
-      this.registry.events.emit("start-game");
-    });
+      // Start Game button
+      this.startButton = this.add
+        .text(centerX, centerY + 60, "Start Game", {
+          fontSize: "32px",
+          fill: "#0f0",
+        })
+        .setOrigin(0.5)
+        .setInteractive();
 
-    // Quit game (only works in Electron or native app)
-    this.quitButton.on("pointerdown", () => {
-      if (navigator.userAgent.includes("Electron")) {
-        window.close();
-      } else {
-        alert("Quit functionality only works in a native app!");
-      }
+      // Quit Game button
+      this.quitButton = this.add
+        .text(centerX, centerY + 120, "Quit Game", {
+          fontSize: "32px",
+          fill: "#f00",
+        })
+        .setOrigin(0.5)
+        .setInteractive();
+
+      // Toggle music when clicked
+      this.speakerButton.on("pointerdown", () => {
+        if (!this.isMusicPlaying) {
+          this.sound.setMute(false);
+          this.speakerButton.setText("Sound: on");
+        } else {
+          this.sound.setMute(true);
+          this.speakerButton.setText("Sound: off");
+        }
+        this.isMusicPlaying = !this.isMusicPlaying;
+      });
+
+      // Start game when clicked
+      this.startButton.on("pointerdown", () => {
+        this.scene.stop("MainScene");
+        this.scene.stop("GUI");
+        this.scene.start("GUI");
+        this.scene.start("MainScene");
+
+        this.registry.events.emit("start-game");
+      });
+
+      // Quit game (only works in Electron or native app)
+      this.quitButton.on("pointerdown", () => {
+        if (navigator.userAgent.includes("Electron")) {
+          window.close();
+        } else {
+          alert("Quit functionality only works in a native app!");
+        }
+      });
     });
   }
 
@@ -97,9 +110,9 @@ class MainMenu extends Phaser.Scene {
     const centerY = height / 2;
 
     this.titleText.setPosition(centerX, centerY - 100);
-    this.speakerButton.setPosition(centerX, centerY);
-    this.startButton.setPosition(centerX, centerY + 60);
-    this.quitButton.setPosition(centerX, centerY + 120);
+    if (this.speakerButton) this.speakerButton.setPosition(centerX, centerY);
+    if (this.startButton) this.startButton.setPosition(centerX, centerY + 60);
+    if (this.quitButton) this.quitButton.setPosition(centerX, centerY + 120);
   }
 }
 
