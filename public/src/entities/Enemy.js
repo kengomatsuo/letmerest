@@ -5,7 +5,10 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
 
     this.speed = 100;
+    this.maxSpeed = 100;
+    this.acceleration = 5;
     this.health = 50;
+    this.stunned = false;
 
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
       player.takeDamage(1);
@@ -13,17 +16,30 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   chasePlayer(player) {
-    const angle = Phaser.Math.Angle.Between(this.x, this.y, player.x, player.y);
-    this.setVelocity(
-      Math.cos(angle) * this.speed,
-      Math.sin(angle) * this.speed
-    );
+    if (this.stunned) {
+      this.speed = 0;
+      return;
+    }
+    // Acceleration
+    if (this.speed != this.maxSpeed) this.speed += this.acceleration;
+
+    this.scene.physics.moveToObject(this, player, this.speed);
   }
 
-  takeDamage(amount) {
+  takeDamage(amount, knockback) {
     this.health -= amount;
+
     if (this.health <= 0) {
       this.die();
+    }
+
+    if (knockback) {
+      this.stunned = true;
+      this.setVelocity(-this.body.velocity.x, -this.body.velocity.y);
+      // Add a short delay before allowing movement again
+      this.scene.time.delayedCall(100, () => {
+        this.stunned = false;
+      });
     }
   }
 

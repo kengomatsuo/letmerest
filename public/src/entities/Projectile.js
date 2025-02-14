@@ -8,6 +8,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
     this.lifespan = 2000; 
     this.pierce = 1;
     this.damage = 20; 
+    this.knockback = 200;
 
     this.hitEnemies = new Set(); 
 
@@ -27,7 +28,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.overlap(this, scene.enemies, (projectile, enemy) => {
       if (!this.hitEnemies.has(enemy)) {
         this.hitEnemies.add(enemy);
-        enemy.takeDamage(this.damage); 
+        enemy.takeDamage(this.damage, this.knockback); 
         if (this.pierce == 0) this.destroy(); 
         this.pierce--;
       }
