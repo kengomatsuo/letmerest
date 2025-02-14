@@ -19,6 +19,10 @@ const config = {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
   },
+  fps: {
+    target: 60, // Set game FPS limit
+    // forceSetTimeOut: true, // Force the use of setTimeout to cap FPS
+  },
 };
 
 const game = new Phaser.Game(config);

@@ -5,32 +5,44 @@ class MainMenu extends Phaser.Scene {
 
   create() {
     // Title text
-    this.add.text(
-      this.cameras.main.centerX, 
-      this.cameras.main.centerY - 100, 
-      "Let Me Rest!", 
-      { fontSize: "48px", fill: "#fff" }
-    ).setOrigin(0.5);
+    this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY - 100,
+        "Let Me Rest!",
+        { fontSize: "48px", fill: "#fff" }
+      )
+      .setOrigin(0.5);
 
     // Start Game button
-    this.startButton = this.add.text(
-      this.cameras.main.centerX, 
-      this.cameras.main.centerY, 
-      "Start Game", 
-      { fontSize: "32px", fill: "#0f0" }
-    ).setOrigin(0.5).setInteractive();
+    this.startButton = this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY,
+        "Start Game",
+        { fontSize: "32px", fill: "#0f0" }
+      )
+      .setOrigin(0.5)
+      .setInteractive();
 
     // Quit Game button
-    this.quitButton = this.add.text(
-      this.cameras.main.centerX, 
-      this.cameras.main.centerY + 60, 
-      "Quit Game", 
-      { fontSize: "32px", fill: "#f00" }
-    ).setOrigin(0.5).setInteractive();
+    this.quitButton = this.add
+      .text(
+        this.cameras.main.centerX,
+        this.cameras.main.centerY + 60,
+        "Quit Game",
+        { fontSize: "32px", fill: "#f00" }
+      )
+      .setOrigin(0.5)
+      .setInteractive();
 
     // Start game when clicked
     this.startButton.on("pointerdown", () => {
+      this.scene.stop("MainScene");
+      this.scene.stop("GUI")
       this.scene.start("MainScene");
+      this.scene.start("GUI");
+      this.registry.events.emit("start-game");
     });
 
     // Quit game (only works in Electron or native app)

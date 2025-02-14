@@ -10,9 +10,13 @@ class MainScene extends Phaser.Scene {
         this.load.image('player', '../../assets/player.png');
         this.load.image('enemy', '../../assets/enemy.png');
         this.load.image('bullet', '../../assets/bullet.png');
+        this.load.image('pointer', '../../assets/pointer.png');
     }
 
     create() {
+
+        this.gameTimer = 0;
+
         this.player = new Player(this, 400, 300);
         this.cameras.main.startFollow(this.player, true, 1, 1);
         
@@ -43,6 +47,20 @@ class MainScene extends Phaser.Scene {
             loop: true
         });
 
+        // Update game timer every second
+        this.time.addEvent({
+            delay: 1000,
+            callback: () => {
+                this.registry.events.emit("update-timer", ++this.gameTimer);
+            },
+            loop: true
+        });
+
+        this.registry.events.on("start-game", () => {  
+            this.timer = 0;
+            this.time.paused = false;
+        });
+
         this.registry.events.on("pause-game", () => {
             this.physics.pause();
             this.time.paused = true;
@@ -61,7 +79,7 @@ class MainScene extends Phaser.Scene {
             
             // Stop player
             if (this.player) {
-                this.player.setVelocity(0);
+                this.player.body.setVelocity(0);
                 this.player.setActive(false);
                 this.player.body.enable = false;
             }

@@ -1,6 +1,6 @@
 class GUI extends Phaser.Scene {
   constructor() {
-    super({ key: "GUI", active: true });
+    super({ key: "GUI", active: false });
   }
 
   create() {
@@ -12,10 +12,17 @@ class GUI extends Phaser.Scene {
       fill: "#fff",
     });
 
-    this.fpsText = this.add.text(10, 70, "FPS: 0", {
+    this.fpsText = this.add.text(10, 70, "FPS:", {
       fontSize: "20px",
       fill: "#0f0",
     });
+
+    this.timerText = this.add
+      .text(this.cameras.main.centerX, 10, "00:00", {
+        fontSize: "32px",
+        fill: "#fff",
+      })
+      .setOrigin(0.5, 0);
 
     this.input.keyboard.on("keydown-ESC", () => {
       this.registry.events.emit("pause-game");
@@ -23,16 +30,16 @@ class GUI extends Phaser.Scene {
 
     // Health bar background (red)
     this.healthBarBg = this.add.graphics();
-    this.healthBarBg.fillStyle(0x800000, 1); // Dark red
-    this.healthBarBg.fillRect(10, 40, 100, 15); // (x, y, width, height)
+    this.healthBarBg.fillStyle(0x800000, 1);
+    this.healthBarBg.fillRect(10, 40, 100, 15);
 
     // Health bar foreground (green)
     this.healthBar = this.add.graphics();
-    this.healthBar.fillStyle(0x00ff00, 1); // Green
-    this.healthBar.fillRect(10, 40, 100, 15); // Initial full health bar
+    this.healthBar.fillStyle(0x00ff00, 1);
+    this.healthBar.fillRect(10, 40, 100, 15);
 
     // Health text
-    this.healthText = this.add.text(115, 40, "100%", {
+    this.healthText = this.add.text(115, 40, "", {
       fontSize: "14px",
       fill: "#fff",
     });
@@ -43,23 +50,62 @@ class GUI extends Phaser.Scene {
       this.scoreText.setText(`Score: ${this.score}`);
     });
 
+    // Listen for timer updates
+    this.registry.events.on("update-timer", (time) => {
+      const minutes = String(Math.floor(time / 60)).padStart(2, "0");
+      const seconds = String(time % 60).padStart(2, "0");
+      this.timerText.setText(`${minutes}:${seconds}`);
+    });
+
+    // Listen for game start event
+    this.registry.events.on("start-game", () => {
+      this.score = 0;
+      this.scoreText.setText("Score: 0");
+      this.timerText.setText("00:00");
+    });
+
+    // Game over event
     this.registry.events.on("game-over", () => {
       this.healthBar.clear();
       this.healthBar.fillStyle(0x00ff00, 1);
       this.healthBar.fillRect(10, 40, 0, 15);
       this.healthText.setText("0");
 
-      this.add
+      const gameOverText = this.add
         .text(
           this.cameras.main.centerX,
-          this.cameras.main.centerY,
+          this.cameras.main.centerY - 50,
           "Game Over",
-          {
-            fontSize: "40px",
-            fill: "#f00",
-          }
+          { fontSize: "40px", fill: "#f00" }
         )
         .setOrigin(0.5);
+
+      const menuButton = this.add
+        .text(
+          this.cameras.main.centerX,
+          this.cameras.main.centerY + 20,
+          "Back to Main Menu",
+          {
+            fontSize: "24px",
+            fill: "#fff",
+            backgroundColor: "#000",
+            padding: { x: 10, y: 5 },
+          }
+        )
+        .setOrigin(0.5)
+        .setInteractive()
+        // .on("pointerover", () => menuButton.setStyle({ fill: "#ff0" })) // Hover effect
+        // .on("pointerout", () => menuButton.setStyle({ fill: "#fff" }))
+        .on("pointerdown", () => {
+          // Destroy gameOverText and mainMenuButton
+          gameOverText.destroy();
+          menuButton.destroy();
+          this.scene.stop("MainScene");
+          this.scene.stop("GUI");
+          this.scene.start("MainMenu");
+        });
+
+      this.timerRunning = false; // Stop timer when game is over
     });
   }
 
@@ -75,12 +121,10 @@ class GUI extends Phaser.Scene {
       const health = Math.max(this.player.health, 0);
       const barWidth = (health / 100) * 100;
 
-      // Clear old health bar
       this.healthBar.clear();
       this.healthBar.fillStyle(0x00ff00, 1);
       this.healthBar.fillRect(10, 40, barWidth, 15);
 
-      // Update health text
       this.healthText.setText(health);
     }
   }
