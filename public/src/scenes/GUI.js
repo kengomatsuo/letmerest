@@ -4,28 +4,28 @@ class GUI extends Phaser.Scene {
   }
 
   create() {
+    this.createUI();
+
+    // Listen for window resize and adjust UI elements
+    this.scale.on("resize", this.resizeUI, this);
+  }
+
+  createUI() {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const centerX = width / 2;
+
     this.score = 0;
     this.player = null;
 
-    this.scoreText = this.add.text(10, 10, "Score: 0", {
-      fontSize: "20px",
-      fill: "#fff",
-    });
-
-    this.fpsText = this.add.text(10, 70, "FPS:", {
-      fontSize: "20px",
-      fill: "#0f0",
-    });
-
-    this.timerText = this.add
-      .text(this.cameras.main.centerX, 10, "00:00", {
-        fontSize: "32px",
-        fill: "#fff",
-      })
-      .setOrigin(0.5, 0);
-
     this.input.keyboard.on("keydown-ESC", () => {
       this.registry.events.emit("pause-game");
+    });
+
+    // Name display (Top-left)
+    this.nameText = this.add.text(10, 10, "Your name", {
+      fontSize: "20px",
+      fill: "#fff",
     });
 
     // Health bar background (red)
@@ -38,11 +38,33 @@ class GUI extends Phaser.Scene {
     this.healthBar.fillStyle(0x00ff00, 1);
     this.healthBar.fillRect(10, 40, 100, 15);
 
-    // Health text
+    // Health text (next to health bar)
     this.healthText = this.add.text(115, 40, "", {
       fontSize: "14px",
       fill: "#fff",
     });
+
+    // FPS display (Top-left below health)
+    this.fpsText = this.add.text(10, 70, "FPS:", {
+      fontSize: "20px",
+      fill: "#0f0",
+    });
+
+    // Timer (Top-center)
+    this.timerText = this.add
+      .text(centerX, 10, "00:00", {
+        fontSize: "32px",
+        fill: "#fff",
+      })
+      .setOrigin(0.5, 0);
+
+    // Score display (Top-center below timer)
+    this.scoreText = this.add
+      .text(centerX, 40, "Score: 0", {
+        fontSize: "20px",
+        fill: "#fff",
+      })
+      .setOrigin(0.5, 0);
 
     // Listen for score updates
     this.registry.events.on("update-score", (value) => {
@@ -57,56 +79,68 @@ class GUI extends Phaser.Scene {
       this.timerText.setText(`${minutes}:${seconds}`);
     });
 
-    // Listen for game start event
+    // Listen for game start
     this.registry.events.on("start-game", () => {
       this.score = 0;
-      this.scoreText.setText("Score: 0");
-      this.timerText.setText("00:00");
     });
 
     // Game over event
     this.registry.events.on("game-over", () => {
-      this.healthBar.clear();
-      this.healthBar.fillStyle(0x00ff00, 1);
-      this.healthBar.fillRect(10, 40, 0, 15);
-      this.healthText.setText("0");
-
-      const gameOverText = this.add
-        .text(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY - 50,
-          "Game Over",
-          { fontSize: "40px", fill: "#f00" }
-        )
-        .setOrigin(0.5);
-
-      const menuButton = this.add
-        .text(
-          this.cameras.main.centerX,
-          this.cameras.main.centerY + 20,
-          "Back to Main Menu",
-          {
-            fontSize: "24px",
-            fill: "#fff",
-            backgroundColor: "#000",
-            padding: { x: 10, y: 5 },
-          }
-        )
-        .setOrigin(0.5)
-        .setInteractive()
-        // .on("pointerover", () => menuButton.setStyle({ fill: "#ff0" })) // Hover effect
-        // .on("pointerout", () => menuButton.setStyle({ fill: "#fff" }))
-        .on("pointerdown", () => {
-          // Destroy gameOverText and mainMenuButton
-          gameOverText.destroy();
-          menuButton.destroy();
-          this.scene.stop("MainScene");
-          this.scene.stop("GUI");
-          this.scene.start("MainMenu");
-        });
-
-      this.timerRunning = false; // Stop timer when game is over
+      this.handleGameOver();
     });
+  }
+
+  handleGameOver() {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    // Clear health bar
+    this.healthBar.clear();
+    this.healthBar.fillStyle(0x00ff00, 1);
+    this.healthBar.fillRect(10, 40, 0, 15);
+    this.healthText.setText("0");
+
+    // "Game Over" text (Centered)
+    this.gameOverText = this.add
+      .text(centerX, centerY - 50, "Game Over", {
+        fontSize: "40px",
+        fill: "#f00",
+      })
+      .setOrigin(0.5);
+
+    // Back to Main Menu button (Centered)
+    this.menuButton = this.add
+      .text(centerX, centerY + 20, "Back to Main Menu", {
+        fontSize: "24px",
+        fill: "#fff",
+        backgroundColor: "#000",
+        padding: { x: 10, y: 5 },
+      })
+      .setOrigin(0.5)
+      .setInteractive()
+      .on("pointerdown", () => {
+        this.scene.stop("MainScene");
+        this.scene.stop("GUI");
+        this.scene.start("MainMenu");
+      });
+
+    this.timerRunning = false; // Stop timer on game over
+  }
+
+  resizeUI(gameSize) {
+    const { width, height } = gameSize;
+    const centerX = width / 2;
+
+    // Reposition timer (Top-center)
+    this.timerText.setPosition(centerX, 10);
+
+    // If game over text exists, reposition it
+    if (this.gameOverText) {
+      this.gameOverText.setPosition(centerX, height / 2 - 50);
+      this.menuButton.setPosition(centerX, height / 2 + 20);
+    }
   }
 
   setPlayer(player) {

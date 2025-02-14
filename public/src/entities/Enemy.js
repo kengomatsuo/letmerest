@@ -46,7 +46,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   die() {
-    this.scene.registry.events.emit("update-score", 10);
+    this.scene.registry.events.emit("update-score", 5);
 
     const text = this.scene.add
       .text(this.x, this.y, "Done!", {
