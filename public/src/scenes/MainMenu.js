@@ -3,8 +3,19 @@ class MainMenu extends Phaser.Scene {
     super({ key: "MainMenu" });
   }
 
+  preload() {
+    this.load.audio("bgm", "assets/music/Hectic_bass_drums_cut.ogg");
+  }
+
   create() {
     this.createUI();
+
+    // Start music only if not already playing
+    if (!this.sound.get("bgm")) {
+      this.music = this.sound.add("bgm", { loop: true, volume: 0.5 });
+    } else {
+      this.music = this.sound.get("bgm");
+    }
 
     // Listen for window resize and adjust UI elements
     this.scale.on("resize", this.resizeUI, this);
@@ -13,6 +24,11 @@ class MainMenu extends Phaser.Scene {
   createUI() {
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
+
+    this.speakerButton = this.add
+      .text(20, 20, "🔇", { fontSize: "32px", fill: "#fff" })
+      .setOrigin(0.5)
+      .setInteractive();
 
     // Title text
     this.titleText = this.add
@@ -33,6 +49,18 @@ class MainMenu extends Phaser.Scene {
       .text(centerX, centerY + 60, "Quit Game", { fontSize: "32px", fill: "#f00" })
       .setOrigin(0.5)
       .setInteractive();
+
+    // Toggle music when clicked
+    this.speakerButton.on("pointerdown", () => {
+      if (this.isMusicPlaying) {
+        this.music.pause();
+        this.speakerButton.setText("🔇"); // Muted icon
+      } else {
+        this.music.play(); // Start the music on first click
+        this.speakerButton.setText("🔊"); // Playing icon
+      }
+      this.isMusicPlaying = !this.isMusicPlaying;
+    });
 
     // Start game when clicked
     this.startButton.on("pointerdown", () => {
