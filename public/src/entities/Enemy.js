@@ -5,13 +5,14 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
 
     this.speed = 100;
+    this.damage = 2;
     this.maxSpeed = 100;
     this.acceleration = 5;
     this.health = 50;
     this.stunned = false;
 
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
-      player.takeDamage(1);
+      player.takeDamage(this.damage);
     });
   }
 

@@ -8,7 +8,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     this.health = 100;
     this.shield = 0;
-
     this.setCollideWorldBounds(false);
     this.speed = 200;
     this.projectiles = scene.add.group();
@@ -16,6 +15,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // Attack properties
     this.attackSpeed = 1; // Shots per second
     this.shootEvent = null;
+    this.angle = 0; // Store the last cursor angle
 
     this.startShooting(); // Start auto-shooting
 
@@ -32,7 +32,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.joystick = scene.input.activePointer;
     this.isTouching = false;
 
-    scene.input.on("pointerdown", (pointer) => {
+    scene.input.on("pointermove", (pointer) => {
+      this.angle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
+    });
+
+    scene.input.on("pointerdown", () => {
       this.isTouching = true;
     });
 
@@ -113,13 +117,13 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   shoot() {
-    const pointer = this.scene.input.activePointer;
+    // Use last stored angle instead of pointer position
     const projectile = new Projectile(
       this.scene,
       this.x,
       this.y,
-      pointer.worldX,
-      pointer.worldY
+      this.x + Math.cos(this.angle) * 100,
+      this.y + Math.sin(this.angle) * 100
     );
     this.projectiles.add(projectile);
   }
