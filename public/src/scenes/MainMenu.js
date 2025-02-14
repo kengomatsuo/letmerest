@@ -26,7 +26,7 @@ class MainMenu extends Phaser.Scene {
     const centerY = this.scale.height / 2;
 
     this.speakerButton = this.add
-      .text(20, 20, "🔇", { fontSize: "32px", fill: "#fff" })
+      .text(centerX, centerY, (this.isMusicPlaying ? "Sound: on" : "Sound: off"), { fontSize: "32px", fill: "#fff" })
       .setOrigin(0.5)
       .setInteractive();
 
@@ -40,13 +40,13 @@ class MainMenu extends Phaser.Scene {
 
     // Start Game button
     this.startButton = this.add
-      .text(centerX, centerY, "Start Game", { fontSize: "32px", fill: "#0f0" })
+      .text(centerX, centerY + 60, "Start Game", { fontSize: "32px", fill: "#0f0" })
       .setOrigin(0.5)
       .setInteractive();
 
     // Quit Game button
     this.quitButton = this.add
-      .text(centerX, centerY + 60, "Quit Game", { fontSize: "32px", fill: "#f00" })
+      .text(centerX, centerY + 120, "Quit Game", { fontSize: "32px", fill: "#f00" })
       .setOrigin(0.5)
       .setInteractive();
 
@@ -54,10 +54,10 @@ class MainMenu extends Phaser.Scene {
     this.speakerButton.on("pointerdown", () => {
       if (this.isMusicPlaying) {
         this.music.pause();
-        this.speakerButton.setText("🔇"); // Muted icon
+        this.speakerButton.setText("Sound: off"); // Muted icon
       } else {
         this.music.play(); // Start the music on first click
-        this.speakerButton.setText("🔊"); // Playing icon
+        this.speakerButton.setText("Sound: on"); // Playing icon
       }
       this.isMusicPlaying = !this.isMusicPlaying;
     });
