@@ -62,7 +62,10 @@ class PauseMenu extends Phaser.Scene {
     this.input.keyboard.on("keydown-ESC", () => this.resumeGame());
 
     // Restart game on button click
-    this.restartButton.on("pointerdown", () => this.restartGame());
+    this.restartButton.on("pointerdown", () => {
+      this.registry.events.emit("start-game");
+      this.restartGame();
+    });
 
     // Quit game
     this.quitButton.on("pointerdown", () => this.quitToMainMenu());
@@ -76,11 +79,12 @@ class PauseMenu extends Phaser.Scene {
   restartGame() {
     this.scene.stop("MainScene");
     this.scene.start("MainScene");
-    this.registry.events.emit("resume-game");
+    this.registry.events.emit("start-game");
   }
 
   quitToMainMenu() {
     this.scene.stop("MainScene");
+    this.scene.stop("GUI")
     this.scene.start("MainMenu"); // Ensure "MainMenu" exists
   }
 }

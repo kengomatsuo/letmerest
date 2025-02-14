@@ -14,8 +14,6 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
       player.takeDamage(this.damage);
     });
-
-    scene.physics.add.collider(this, scene.enemies);
   }
 
   chasePlayer(player) {

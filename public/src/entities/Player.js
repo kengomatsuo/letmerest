@@ -1,14 +1,18 @@
 import Projectile from "./Projectile.js";
 
-class Player extends Phaser.Physics.Arcade.Sprite {
+class Player extends Phaser.GameObjects.Container {
   constructor(scene, x, y) {
-    super(scene, x, y, "player");
+    super(scene, x, y);
     scene.add.existing(this);
-    scene.physics.add.existing(this);
+    scene.physics.world.enable(this);
+
+    // this.body = this.body as Phaser.Physics.Arcade.Body;
+    this.body.setCollideWorldBounds(false);
+    this.body.setSize(32, 32); // Adjust size as needed
+    this.body.setOffset(-16, -16); // Center the body properly
 
     this.health = 100;
     this.shield = 0;
-    this.setCollideWorldBounds(false);
     this.speed = 200;
     this.projectiles = scene.add.group();
 
@@ -17,7 +21,17 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.shootEvent = null;
     this.firingAngle = 0; // Store the last cursor angle
 
-    this.startShooting(); // Start auto-shooting
+    // Create the pointer sprite (attack direction indicator)
+    this.pointerSprite = scene.add.sprite(0, 0, "pointer");
+    this.pointerSprite.setOrigin(0.5);
+
+    // Create the player sprite
+    this.playerSprite = scene.add.sprite(0, 0, "player");
+    this.playerSprite.setOrigin(0.5);
+
+    // Add both sprites to this container
+    this.add(this.playerSprite);
+    this.add(this.pointerSprite);
 
     // Keyboard Input Handling
     this.cursors = scene.input.keyboard.createCursorKeys();
@@ -30,7 +44,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
     scene.input.on("pointermove", (pointer) => {
       this.firingAngle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
+      this.pointerSprite.setRotation(this.firingAngle);
     });
+
+    this.startShooting();
   }
 
   move() {
@@ -46,12 +63,12 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // Normalize diagonal movement
     if (moveX !== 0 || moveY !== 0) {
       const angle = Math.atan2(moveY, moveX);
-      this.setVelocity(
+      this.body.setVelocity(
         Math.cos(angle) * this.speed,
         Math.sin(angle) * this.speed
       );
     } else {
-      this.setVelocity(0);
+      this.body.setVelocity(0);
     }
   }
 
@@ -59,7 +76,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     if (this.damageCooldown) return;
 
     this.health = Math.max(this.health - amount, 0);
-    if (this.health == 0) {
+    if (this.health === 0) {
       this.die();
     }
 
@@ -75,6 +92,9 @@ class Player extends Phaser.Physics.Arcade.Sprite {
 
   die() {
     this.scene.registry.events.emit("game-over");
+    
+    // Remove pointer movement event
+    this.scene.input.off("pointermove");
   }
 
   startShooting() {
@@ -89,7 +109,6 @@ class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   shoot() {
-    // Use last stored angle instead of pointer position
     const projectile = new Projectile(
       this.scene,
       this.x,
