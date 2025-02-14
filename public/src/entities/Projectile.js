@@ -1,5 +1,5 @@
 class Projectile extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, targetX, targetY) {
+  constructor(scene, x, y, angle) {
     super(scene, x, y, "projectile");
     scene.add.existing(this);
     scene.physics.add.existing(this);
@@ -12,8 +12,10 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     this.hitEnemies = new Set(); 
 
+    // Angle
+    this.setRotation(angle);
+    
     // Calculate velocity to move toward target
-    const angle = Phaser.Math.Angle.Between(x, y, targetX, targetY);
     this.setVelocity(
       Math.cos(angle) * this.speed,
       Math.sin(angle) * this.speed

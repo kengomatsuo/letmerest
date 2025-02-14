@@ -15,11 +15,11 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     // Attack properties
     this.attackSpeed = 1; // Shots per second
     this.shootEvent = null;
-    this.angle = 0; // Store the last cursor angle
+    this.firingAngle = 0; // Store the last cursor angle
 
     this.startShooting(); // Start auto-shooting
 
-    // Input handling
+    // Keyboard Input Handling
     this.cursors = scene.input.keyboard.createCursorKeys();
     this.keys = scene.input.keyboard.addKeys({
       W: Phaser.Input.Keyboard.KeyCodes.W,
@@ -28,21 +28,8 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       D: Phaser.Input.Keyboard.KeyCodes.D,
     });
 
-    // Touch control setup
-    this.joystick = scene.input.activePointer;
-    this.isTouching = false;
-
     scene.input.on("pointermove", (pointer) => {
-      this.angle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
-    });
-
-    scene.input.on("pointerdown", () => {
-      this.isTouching = true;
-    });
-
-    scene.input.on("pointerup", () => {
-      this.isTouching = false;
-      this.setVelocity(0);
+      this.firingAngle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
     });
   }
 
@@ -66,27 +53,12 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     } else {
       this.setVelocity(0);
     }
-
-    // Touch movement
-    if (this.isTouching) {
-      const angle = Phaser.Math.Angle.Between(
-        this.x,
-        this.y,
-        this.joystick.worldX,
-        this.joystick.worldY
-      );
-      this.setVelocity(
-        Math.cos(angle) * this.speed,
-        Math.sin(angle) * this.speed
-      );
-    }
   }
 
   takeDamage(amount) {
     if (this.damageCooldown) return;
 
     this.health = Math.max(this.health - amount, 0);
-    console.log(this.health);
     if (this.health == 0) {
       this.die();
     }
@@ -122,8 +94,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
       this.scene,
       this.x,
       this.y,
-      this.x + Math.cos(this.angle) * 100,
-      this.y + Math.sin(this.angle) * 100
+      this.firingAngle
     );
     this.projectiles.add(projectile);
   }
