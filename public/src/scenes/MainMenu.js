@@ -1,6 +1,7 @@
 class MainMenu extends Phaser.Scene {
   constructor() {
     super({ key: "MainMenu" });
+    this.isMusicPlaying = false;
   }
 
   preload() {
@@ -10,13 +11,6 @@ class MainMenu extends Phaser.Scene {
   create() {
     this.createUI();
 
-    // Start music only if not already playing
-    if (!this.sound.get("bgm")) {
-      this.music = this.sound.add("bgm", { loop: true, volume: 0.5 });
-    } else {
-      this.music = this.sound.get("bgm");
-    }
-
     // Listen for window resize and adjust UI elements
     this.scale.on("resize", this.resizeUI, this);
   }
@@ -24,11 +18,6 @@ class MainMenu extends Phaser.Scene {
   createUI() {
     const centerX = this.scale.width / 2;
     const centerY = this.scale.height / 2;
-
-    this.speakerButton = this.add
-      .text(centerX, centerY, (this.isMusicPlaying ? "Sound: on" : "Sound: off"), { fontSize: "32px", fill: "#fff" })
-      .setOrigin(0.5)
-      .setInteractive();
 
     // Title text
     this.titleText = this.add
@@ -38,26 +27,46 @@ class MainMenu extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
+    // Speaker button
+    this.speakerButton = this.add
+      .text(
+        centerX,
+        centerY,
+        this.isMusicPlaying ? "Sound: on" : "Sound: off",
+        { fontSize: "32px", fill: "#fff" }
+      )
+      .setOrigin(0.5)
+      .setInteractive();
+
     // Start Game button
     this.startButton = this.add
-      .text(centerX, centerY + 60, "Start Game", { fontSize: "32px", fill: "#0f0" })
+      .text(centerX, centerY + 60, "Start Game", {
+        fontSize: "32px",
+        fill: "#0f0",
+      })
       .setOrigin(0.5)
       .setInteractive();
 
     // Quit Game button
     this.quitButton = this.add
-      .text(centerX, centerY + 120, "Quit Game", { fontSize: "32px", fill: "#f00" })
+      .text(centerX, centerY + 120, "Quit Game", {
+        fontSize: "32px",
+        fill: "#f00",
+      })
       .setOrigin(0.5)
       .setInteractive();
 
     // Toggle music when clicked
     this.speakerButton.on("pointerdown", () => {
-      if (this.isMusicPlaying) {
-        this.music.pause();
-        this.speakerButton.setText("Sound: off"); // Muted icon
+      if (!this.music) {
+        this.music = this.sound.add("bgm", { loop: true, volume: 0.5 });
+      }
+      if (!this.isMusicPlaying) {
+        this.music.play();
+        this.speakerButton.setText("Sound: on");
       } else {
-        this.music.play(); // Start the music on first click
-        this.speakerButton.setText("Sound: on"); // Playing icon
+        this.music.pause();
+        this.speakerButton.setText("Sound: off");
       }
       this.isMusicPlaying = !this.isMusicPlaying;
     });
