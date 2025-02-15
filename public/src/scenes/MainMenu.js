@@ -10,7 +10,6 @@ class MainMenu extends Phaser.Scene {
     }
 
     this.audioManager = this.scene.get("AudioManager"); // Get AudioManager scene
-    console.log(this.audioManager)
     this.createUI();
 
     // Listen for window resize and adjust UI elements
@@ -29,18 +28,24 @@ class MainMenu extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.continueText = this.add
-      .text(centerX, centerY + 60, "Click anywhere to continue", {
-        fontSize: "32px",
-        fill: "#ccc",
-      })
-      .setOrigin(0.5);
+    if (!this.audioManager.currentMusic) {
+      this.continueText = this.add
+        .text(centerX, centerY + 60, "Click anywhere to continue", {
+          fontSize: "32px",
+          fill: "#ccc",
+        })
+        .setOrigin(0.5);
+      // Listener for clicking anywhere to continue
+      this.input.once("pointerdown", () => {
+        this.mainSettings(centerX, centerY);
+      });
+    } else this.mainSettings(centerX, centerY);
+  }
 
-    // Listener for clicking anywhere to continue
-
-    this.input.once("pointerdown", () => {
+  mainSettings(centerX, centerY) {
+    if (this.audioManager && this.continueText) {
       this.continueText.destroy();
-      this.audioManager.playMusic("mainMenuBgm");
+      this.registry.events.emit("main-menu");
 
       // Speaker button
       this.speakerButton = this.add
@@ -87,8 +92,6 @@ class MainMenu extends Phaser.Scene {
       // Start game when clicked
       this.startButton.on("pointerdown", () => {
         this.sound.play("gameStart");
-        this.scene.stop("MainScene");
-        this.scene.stop("GUI");
         this.scene.start("GUI");
         this.scene.start("MainScene");
 
@@ -104,7 +107,7 @@ class MainMenu extends Phaser.Scene {
           alert("Quit functionality only works in a native app!");
         }
       });
-    });
+    }
   }
 
   resizeUI(gameSize) {

@@ -63,7 +63,7 @@ class MainScene extends Phaser.Scene {
         this.registry.events.on("pause-game", () => {
             this.physics.pause();
             this.time.paused = true;
-            this.scene.launch("PauseMenu");
+            if(!this.scene.isActive("PauseMenu"))this.scene.launch("PauseMenu");
         });
 
         this.registry.events.on("resume-game", () => {

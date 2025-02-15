@@ -23,16 +23,18 @@ class GUI extends Phaser.Scene {
     this.player = null;
 
     window.addEventListener("blur", () => {
+      if (this.scene.isActive("PauseMenu")) return;
       this.registry.events.emit("pause-game");
     });
 
     this.input.keyboard.on("keydown-ESC", () => {
-      this.sound.play("click", { volume: 0.6 });
       // If pausemenu scene is not active, start it
       if (!this.scene.isActive("PauseMenu")) {
         this.registry.events.emit("pause-game");
+        this.sound.play("pauseIn");
       } else {
         this.registry.events.emit("resume-game");
+        this.sound.play("pauseOut");
         this.scene.stop("PauseMenu");
       }
     });
@@ -127,7 +129,8 @@ class GUI extends Phaser.Scene {
       .setOrigin(0.5);
 
     // Back to Main Menu button (Centered)
-    this.menuButton = this.add
+    this.time.delayedCall(3300, () => {
+      this.menuButton = this.add
       .text(centerX, centerY + 20, "Back to Main Menu", {
         fontSize: "24px",
         fill: "#fff",
@@ -141,6 +144,7 @@ class GUI extends Phaser.Scene {
         this.scene.stop("GUI");
         this.scene.start("MainMenu");
       });
+    });
 
     this.timerRunning = false; // Stop timer on game over
   }

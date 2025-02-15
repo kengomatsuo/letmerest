@@ -15,7 +15,10 @@ class AudioManager extends Phaser.Scene {
       "assets/music/Hectic.ogg",
       "assets/music/Hectic.mp3",
     ]);
+    this.load.audio("pauseIn", "assets/sounds/Pause_In.mp3")
+    this.load.audio("pauseOut", "assets/sounds/Pause_Out.mp3")
     this.load.audio("playerHit", "assets/sounds/Hit.mp3")
+    this.load.audio("playerHighStress", "assets/sounds/High_Stress.mp3")
     this.load.audio("point", "assets/sounds/Coin.mp3")
     this.load.audio("enemyHit", "assets/sounds/Paper.mp3")
   }
@@ -24,14 +27,22 @@ class AudioManager extends Phaser.Scene {
     this.sound.pauseOnBlur = false; // ✅ Prevents audio from stopping on window blur
     console.log("AudioManager created");
     this.registry.events.on("start-game", () => {
+      console.log("Start-game event received");
       this.playMusic("gameBgm");
     }, this);
 
     this.registry.events.on("pause-game", () => {
-      this.playMusic("mainMenuBgm", 1000);
+      console.log("Pause-game event received");
+      this.playMusic("mainMenuBgm");
+    }, this);
+
+    this.registry.events.on("main-menu", () => {
+      console.log("Main-menu event received");
+      this.playMusic("mainMenuBgm");
     }, this);
 
     this.registry.events.on("resume-game", () => {
+      console.log("Resume-game event received");
       this.playMusic("gameBgm", 4000);
     }, this);
 
@@ -53,11 +64,11 @@ class AudioManager extends Phaser.Scene {
 
     const newMusic = this.sound.add(key, { loop: true, volume: 0 });
     newMusic.play();
-    console.log(this.currentMusic)
+    // console.log(this.currentMusic)
     if (this.currentMusic) {
       const oldMusic = this.currentMusic;
       newMusic.seek = oldMusic.seek; // Sync playback time
-      console.log(oldMusic, newMusic);
+      // console.log(oldMusic, newMusic);
       console.log("Crossfade started");
       oldMusic.setVolume(1);
       // **Tween for fading out old music**

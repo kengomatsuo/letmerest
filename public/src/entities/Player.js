@@ -12,6 +12,8 @@ class Player extends Phaser.GameObjects.Container {
     this.body.setOffset(-16, -16); // Center the body properly
 
     this.stress = 0;
+    this.stressCap = 100;
+    this.highStress = false;
     this.shield = 0;
     this.speed = 200;
     this.projectiles = scene.add.group();
@@ -82,8 +84,14 @@ class Player extends Phaser.GameObjects.Container {
 
     this.stress = Math.min(this.stress + amount, 100);
 
+    if (this.stress >= this.stressCap * 0.75 && !this.highStress) {
+      this.highStress = true;
+      this.scene.sound.play("playerHighStress");
+    }
     // Play hit sound
-    this.scene.sound.play("playerHit", { volume: 0.6 });
+    else {
+      if (this.stress < this.stressCap * 0.75) this.highStress = false;
+      this.scene.sound.play("playerHit", { volume: 0.6 });}
 
     if (this.stress === 100) {
       this.die();
