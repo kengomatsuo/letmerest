@@ -14,7 +14,6 @@ class MainScene extends Phaser.Scene {
     }
 
     create() {
-
         this.gameTimer = 0;
 
         this.player = new Player(this, 400, 300);

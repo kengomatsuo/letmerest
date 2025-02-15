@@ -27,7 +27,14 @@ class GUI extends Phaser.Scene {
     });
 
     this.input.keyboard.on("keydown-ESC", () => {
-      this.registry.events.emit("pause-game");
+      this.sound.play("click", { volume: 0.6 });
+      // If pausemenu scene is not active, start it
+      if (!this.scene.isActive("PauseMenu")) {
+        this.registry.events.emit("pause-game");
+      } else {
+        this.registry.events.emit("resume-game");
+        this.scene.stop("PauseMenu");
+      }
     });
 
     // Name display (Top-left)
@@ -38,7 +45,7 @@ class GUI extends Phaser.Scene {
 
     // Health bar background (red)
     this.healthBarBg = this.add.graphics();
-    this.healthBarBg.fillStyle(0x800000, 1);
+    this.healthBarBg.fillStyle(0xffffff, 1);
     this.healthBarBg.fillRect(10, 40, 100, 15);
 
     // Health bar foreground (green)
@@ -53,14 +60,14 @@ class GUI extends Phaser.Scene {
     });
 
     // FPS display (Top-left below health)
-    this.fpsText = this.add.text(10, 70, "FPS:", {
+    this.fpsText = this.add.text(10, 70, "", {
       fontSize: "20px",
       fill: "#0f0",
     });
 
     // Timer (Top-center)
     this.timerText = this.add
-      .text(centerX, 10, "00:00", {
+      .text(centerX, 10, "", {
         fontSize: "32px",
         fill: "#fff",
       })
@@ -68,7 +75,7 @@ class GUI extends Phaser.Scene {
 
     // Score display (Top-center below timer)
     this.scoreText = this.add
-      .text(centerX, 40, "Score: 0", {
+      .text(centerX, 40, "", {
         fontSize: "20px",
         fill: "#fff",
       })
@@ -77,6 +84,7 @@ class GUI extends Phaser.Scene {
     // Listen for score updates
     this.registry.events.on("update-score", (value) => {
       this.score += value;
+      if (value > 0) this.sound.play("point", { volume: 0.6 });
       this.scoreText.setText(`Score: ${this.score}`);
     });
 
@@ -106,7 +114,7 @@ class GUI extends Phaser.Scene {
 
     // Clear health bar
     this.healthBar.clear();
-    this.healthBar.fillStyle(0x00ff00, 1);
+    this.healthBar.fillStyle(0xff0000, 1);
     this.healthBar.fillRect(10, 40, 0, 15);
     this.healthText.setText("0");
 
@@ -160,14 +168,14 @@ class GUI extends Phaser.Scene {
     this.fpsText.setText(`FPS: ${fps}`);
 
     if (this.player) {
-      const health = Math.max(this.player.health, 0);
-      const barWidth = (health / 100) * 100;
+      const stress = Math.min(this.player.stress, 100);
+      const barWidth = (stress / 100) * 100;
 
       this.healthBar.clear();
-      this.healthBar.fillStyle(0x00ff00, 1);
+      this.healthBar.fillStyle(0xff0000, 1);
       this.healthBar.fillRect(10, 40, barWidth, 15);
 
-      this.healthText.setText(health);
+      this.healthText.setText(stress);
     }
   }
 }
