@@ -11,7 +11,7 @@ class Player extends Phaser.GameObjects.Container {
     this.body.setSize(32, 32); // Adjust size as needed
     this.body.setOffset(-16, -16); // Center the body properly
 
-    this.health = 100;
+    this.stress = 0;
     this.shield = 0;
     this.speed = 200;
     this.projectiles = scene.add.group();
@@ -43,7 +43,12 @@ class Player extends Phaser.GameObjects.Container {
     });
 
     scene.input.on("pointermove", (pointer) => {
-      this.firingAngle = Phaser.Math.Angle.Between(this.x, this.y, pointer.worldX, pointer.worldY);
+      this.firingAngle = Phaser.Math.Angle.Between(
+        this.x,
+        this.y,
+        pointer.worldX,
+        pointer.worldY
+      );
       this.pointerSprite.setRotation(this.firingAngle);
     });
 
@@ -75,24 +80,28 @@ class Player extends Phaser.GameObjects.Container {
   takeDamage(amount) {
     if (this.damageCooldown) return;
 
-    this.health = Math.max(this.health - amount, 0);
-    if (this.health === 0) {
+    this.stress = Math.min(this.stress + amount, 100);
+
+    // Play hit sound
+    this.scene.sound.play("playerHit", { volume: 0.6 });
+
+    if (this.stress === 100) {
       this.die();
     }
 
     this.damageCooldown = true;
-    this.scene.time.delayedCall(100, () => {
+    this.scene.time.delayedCall(300, () => {
       this.damageCooldown = false;
     });
   }
 
   heal(amount) {
-    this.health = Math.min(this.health + amount, 100);
+    this.stress = Math.max(this.stress - amount, 0);
   }
 
   die() {
     this.scene.registry.events.emit("game-over");
-    
+
     // Remove pointer movement event
     this.scene.input.off("pointermove");
   }

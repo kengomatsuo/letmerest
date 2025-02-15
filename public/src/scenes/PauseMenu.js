@@ -37,26 +37,44 @@ class PauseMenu extends Phaser.Scene {
 
     // Restart button
     this.restartButton = this.add
-      .text(centerX, centerY + 50, "Restart", { fontSize: "24px", fill: "#ff0" })
+      .text(centerX, centerY + 50, "Restart", {
+        fontSize: "24px",
+        fill: "#ff0",
+      })
       .setOrigin(0.5)
       .setInteractive();
 
     // Quit button
     this.quitButton = this.add
-      .text(centerX, centerY + 100, "Quit to Main Menu", { fontSize: "24px", fill: "#f00" })
+      .text(centerX, centerY + 100, "Quit to Main Menu", {
+        fontSize: "24px",
+        fill: "#f00",
+      })
       .setOrigin(0.5)
       .setInteractive();
 
     // Add interactivity
-    this.resumeButton.on("pointerdown", () => this.resumeGame());
-    this.input.keyboard.on("keydown-ESC", () => this.resumeGame());
+    this.resumeButton.on("pointerdown", () => {
+      this.sound.play("click", { volume: 0.6 });
+      this.resumeGame();
+    });
+    // this.input.keyboard.on("keydown-ESC", () => {
+    //   this.sound.play("click", { volume: 0.6 });
+
+    //   this.resumeGame();
+    // });
 
     this.restartButton.on("pointerdown", () => {
+      this.sound.play("click", { volume: 0.6 });
+
       this.registry.events.emit("start-game");
       this.restartGame();
     });
 
-    this.quitButton.on("pointerdown", () => this.quitToMainMenu());
+    this.quitButton.on("pointerdown", () => {
+      this.sound.play("click", { volume: 0.6 });
+      this.quitToMainMenu();
+    });
   }
 
   resizeUI(gameSize) {

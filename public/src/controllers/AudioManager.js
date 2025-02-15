@@ -9,10 +9,15 @@ class AudioManager extends Phaser.Scene {
       "assets/music/Hectic_bass_drums.ogg",
       "assets/music/Hectic_bass_drums.mp3",
     ]);
+    this.load.audio("click", "assets/sounds/Click.mp3")
+    this.load.audio("gameStart", "assets/sounds/Game_Start.mp3")
     this.load.audio("gameBgm", [
       "assets/music/Hectic.ogg",
       "assets/music/Hectic.mp3",
     ]);
+    this.load.audio("playerHit", "assets/sounds/Hit.mp3")
+    this.load.audio("point", "assets/sounds/Coin.mp3")
+    this.load.audio("enemyHit", "assets/sounds/Paper.mp3")
   }
 
   create() {
@@ -23,12 +28,24 @@ class AudioManager extends Phaser.Scene {
     }, this);
 
     this.registry.events.on("pause-game", () => {
-      this.playMusic("mainMenuBgm", 500);
+      this.playMusic("mainMenuBgm", 1000);
     }, this);
 
     this.registry.events.on("resume-game", () => {
       this.playMusic("gameBgm", 4000);
     }, this);
+
+    this.registry.events.on("game-over", () => {
+      // Add tweens to decrease music rate and stop it
+      this.tweens.add({
+        targets: this.currentMusic,
+        rate: 0.001,
+        duration: 3000,
+        onComplete: () => {
+          this.currentMusic.stop();
+        },
+      });
+    })
   }
 
   playMusic(key, fadeDuration = 2000) {
@@ -42,7 +59,7 @@ class AudioManager extends Phaser.Scene {
       newMusic.seek = oldMusic.seek; // Sync playback time
       console.log(oldMusic, newMusic);
       console.log("Crossfade started");
-
+      oldMusic.setVolume(1);
       // **Tween for fading out old music**
       this.tweens.add({
         targets: oldMusic,
