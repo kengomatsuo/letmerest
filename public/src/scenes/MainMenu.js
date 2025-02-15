@@ -110,6 +110,7 @@ class MainMenu extends Phaser.Scene {
     const centerY = height / 2;
 
     this.titleText.setPosition(centerX, centerY - 100);
+    if (this.continueText) this.continueText.setPosition(centerX, centerY + 60);
     if (this.speakerButton) this.speakerButton.setPosition(centerX, centerY);
     if (this.startButton) this.startButton.setPosition(centerX, centerY + 60);
     if (this.quitButton) this.quitButton.setPosition(centerX, centerY + 120);
