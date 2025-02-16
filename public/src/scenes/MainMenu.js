@@ -4,6 +4,19 @@ class MainMenu extends Phaser.Scene {
     this.isMusicPlaying = true;
   }
 
+  preload() {
+    this.load.bitmapFont(
+      "titleFont",
+      "assets/fonts/DePixelHalbfett_0.png",
+      "assets/fonts/DePixelHalbfett.fnt"
+    );
+    this.load.bitmapFont(
+      "textFont",
+      "assets/fonts/DePixelKlein_0.png",
+      "assets/fonts/DePixelKlein.fnt"
+    );
+  }
+
   create() {
     if (!this.scene.isActive("AudioManager")) {
       this.scene.launch("AudioManager");
@@ -22,10 +35,7 @@ class MainMenu extends Phaser.Scene {
 
     // Title text
     this.titleText = this.add
-      .text(centerX, centerY - 100, "Let Me Rest!", {
-        fontSize: "48px",
-        fill: "#fff",
-      })
+      .bitmapText(centerX, centerY - 100, "titleFont", "Let Me Rest!", -32)
       .setOrigin(0.5);
 
     if (!this.audioManager.currentMusic) {
