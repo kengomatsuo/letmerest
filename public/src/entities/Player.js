@@ -133,6 +133,7 @@ class Player extends Phaser.GameObjects.Container {
       this.firingAngle
     );
     this.projectiles.add(projectile);
+    this.scene.sound.play("shoot", { volume: 0.6 });
   }
 
   increaseAttackSpeed(amount) {

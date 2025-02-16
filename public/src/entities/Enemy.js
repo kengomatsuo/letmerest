@@ -29,7 +29,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   takeDamage(amount, knockback) {
-    this.scene.sound.play("enemyHit", { volume: 0.8 });
+    this.scene.sound.play("enemyHit", { volume: 0.6 });
     this.health -= amount;
 
     if (this.health <= 0) {

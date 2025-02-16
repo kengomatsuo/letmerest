@@ -20,7 +20,8 @@ class AudioManager extends Phaser.Scene {
     this.load.audio("playerHit", "assets/sounds/Hit.mp3")
     this.load.audio("playerHighStress", "assets/sounds/High_Stress.mp3")
     this.load.audio("point", "assets/sounds/Coin.mp3")
-    this.load.audio("enemyHit", "assets/sounds/Paper.mp3")
+    this.load.audio("shoot", "assets/sounds/Paper.mp3")
+    this.load.audio("enemyHit", "assets/sounds/Enemy_Hit.mp3")
   }
 
   create() {
