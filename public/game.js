@@ -8,6 +8,9 @@ const config = {
   type: Phaser.AUTO,
   width: 800,
   height: 600,
+  render: {
+    pixelArt: true, // Ensures sharp pixels
+  },
   scene: [MainMenu, AudioManager, MainScene, GUI, PauseMenu],
   audio: {
     disableWebAudio: false, // Ensure WebAudio API is used

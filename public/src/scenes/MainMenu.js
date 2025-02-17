@@ -35,15 +35,19 @@ class MainMenu extends Phaser.Scene {
 
     // Title text
     this.titleText = this.add
-      .bitmapText(centerX, centerY - 100, "titleFont", "Let Me Rest!", -32)
+      .bitmapText(centerX, centerY - 100, "titleFont", "Let Me Rest!", -48)
       .setOrigin(0.5);
 
     if (!this.audioManager.currentMusic) {
       this.continueText = this.add
-        .text(centerX, centerY + 60, "Click anywhere to continue", {
-          fontSize: "32px",
-          fill: "#ccc",
-        })
+        .bitmapText(
+          centerX,
+          centerY + 60,
+          "textFont",
+          "Click anywhere to continue",
+          -32
+        )
+        .setAlpha(0.8)
         .setOrigin(0.5);
       // Listener for clicking anywhere to continue
       this.input.once("pointerdown", () => {
@@ -59,30 +63,27 @@ class MainMenu extends Phaser.Scene {
 
       // Speaker button
       this.speakerButton = this.add
-        .text(
+        .bitmapText(
           centerX,
           centerY,
+          "textFont",
           this.isMusicPlaying ? "Sound: on" : "Sound: off",
-          { fontSize: "32px", fill: "#fff" }
+          -32
         )
         .setOrigin(0.5)
         .setInteractive();
 
       // Start Game button
       this.startButton = this.add
-        .text(centerX, centerY + 60, "Start Game", {
-          fontSize: "32px",
-          fill: "#0f0",
-        })
+        .bitmapText(centerX, centerY + 60, "textFont", "Start Game", -32)
+        .setTintFill(0x00ff00)
         .setOrigin(0.5)
         .setInteractive();
 
       // Quit Game button
       this.quitButton = this.add
-        .text(centerX, centerY + 120, "Quit Game", {
-          fontSize: "32px",
-          fill: "#f00",
-        })
+        .bitmapText(centerX, centerY + 120, "textFont", "Quit Game", -32)
+        .setTintFill(0xff0000)
         .setOrigin(0.5)
         .setInteractive();
 

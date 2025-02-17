@@ -8,6 +8,7 @@ class GUI extends Phaser.Scene {
   }
 
   create() {
+    this.background = this.add.graphics();
     this.createUI();
 
     // Listen for window resize and adjust UI elements
@@ -40,10 +41,7 @@ class GUI extends Phaser.Scene {
     });
 
     // Name display (Top-left)
-    this.nameText = this.add.text(10, 10, "Your name", {
-      fontSize: "20px",
-      fill: "#fff",
-    });
+    this.nameText = this.add.bitmapText(10, 10, "textFont", "Your name", -20);
 
     // Health bar background (red)
     this.healthBarBg = this.add.graphics();
@@ -56,31 +54,19 @@ class GUI extends Phaser.Scene {
     this.healthBar.fillRect(10, 40, 100, 15);
 
     // Health text (next to health bar)
-    this.healthText = this.add.text(115, 40, "", {
-      fontSize: "14px",
-      fill: "#fff",
-    });
+    this.healthText = this.add.bitmapText(115, 40, "textFont", "", -14);
 
     // FPS display (Top-left below health)
-    this.fpsText = this.add.text(10, 70, "", {
-      fontSize: "20px",
-      fill: "#0f0",
-    });
+    this.fpsText = this.add.bitmapText(10, 70, "textFont", "", -20);
 
     // Timer (Top-center)
     this.timerText = this.add
-      .text(centerX, 10, "", {
-        fontSize: "32px",
-        fill: "#fff",
-      })
+      .bitmapText(centerX, 10, "textFont", "", -32)
       .setOrigin(0.5, 0);
 
     // Score display (Top-center below timer)
     this.scoreText = this.add
-      .text(centerX, 40, "", {
-        fontSize: "20px",
-        fill: "#fff",
-      })
+      .bitmapText(centerX, 40, "textFont", "", -20)
       .setOrigin(0.5, 0);
 
     // Listen for score updates
@@ -114,6 +100,10 @@ class GUI extends Phaser.Scene {
     const centerX = width / 2;
     const centerY = height / 2;
 
+    // Resize background
+    this.background.fillStyle(0x000000, 0.5);
+    this.background.fillRect(0, 0, width, height);
+
     // Clear health bar
     this.healthBar.clear();
     this.healthBar.fillStyle(0xff0000, 1);
@@ -122,28 +112,20 @@ class GUI extends Phaser.Scene {
 
     // "Game Over" text (Centered)
     this.gameOverText = this.add
-      .text(centerX, centerY - 50, "Game Over", {
-        fontSize: "40px",
-        fill: "#f00",
-      })
+      .bitmapText(centerX, centerY - 50, "titleFont", "Game Over", -42)
       .setOrigin(0.5);
 
     // Back to Main Menu button (Centered)
     this.time.delayedCall(3300, () => {
       this.menuButton = this.add
-      .text(centerX, centerY + 20, "Back to Main Menu", {
-        fontSize: "24px",
-        fill: "#fff",
-        backgroundColor: "#000",
-        padding: { x: 10, y: 5 },
-      })
-      .setOrigin(0.5)
-      .setInteractive()
-      .on("pointerdown", () => {
-        this.scene.stop("MainScene");
-        this.scene.stop("GUI");
-        this.scene.start("MainMenu");
-      });
+        .bitmapText(centerX, centerY + 20, "textFont", "Back to Main Menu", -24)
+        .setOrigin(0.5)
+        .setInteractive()
+        .on("pointerdown", () => {
+          this.scene.stop("MainScene");
+          this.scene.stop("GUI");
+          this.scene.start("MainMenu");
+        });
     });
 
     this.timerRunning = false; // Stop timer on game over
@@ -152,6 +134,12 @@ class GUI extends Phaser.Scene {
   resizeUI(gameSize) {
     const { width, height } = gameSize;
     const centerX = width / 2;
+
+    if (this.background) {
+      this.background.clear();
+      this.background.fillStyle(0x000000, 0.5);
+      this.background.fillRect(0, 0, width, height);
+    }
 
     // Reposition timer (Top-center)
     this.timerText.setPosition(centerX, 10);

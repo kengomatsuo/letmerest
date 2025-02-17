@@ -23,33 +23,27 @@ class PauseMenu extends Phaser.Scene {
 
     // "Game Paused" text
     this.titleText = this.add
-      .text(centerX, centerY - 50, "Game Paused", {
-        fontSize: "40px",
-        fill: "#fff",
-      })
+      .bitmapText(centerX, centerY - 70, "titleFont", "Game Paused", -40)
       .setOrigin(0.5);
 
     // Resume button
     this.resumeButton = this.add
-      .text(centerX, centerY, "Resume Game", { fontSize: "24px", fill: "#0f0" })
+      .bitmapText(centerX, centerY, "textFont", "Resume Game", -24)
+      .setTintFill(0x00ff00)
       .setOrigin(0.5)
       .setInteractive();
 
     // Restart button
     this.restartButton = this.add
-      .text(centerX, centerY + 50, "Restart", {
-        fontSize: "24px",
-        fill: "#ff0",
-      })
+      .bitmapText(centerX, centerY + 50, "textFont", "Restart", -24)
+      .setTintFill(0xffff00)
       .setOrigin(0.5)
       .setInteractive();
 
     // Quit button
     this.quitButton = this.add
-      .text(centerX, centerY + 100, "Quit to Main Menu", {
-        fontSize: "24px",
-        fill: "#f00",
-      })
+      .bitmapText(centerX, centerY + 100, "textFont", "Quit to Main Menu", -24)
+      .setTintFill(0xff0000)
       .setOrigin(0.5)
       .setInteractive();
 
