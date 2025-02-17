@@ -112,7 +112,7 @@ class GUI extends Phaser.Scene {
 
     // "Game Over" text (Centered)
     this.gameOverText = this.add
-      .bitmapText(centerX, centerY - 50, "titleFont", "Game Over", -42)
+      .bitmapText(centerX, centerY - 70, "titleFont", "Game Over", -42)
       .setOrigin(0.5);
 
     // Back to Main Menu button (Centered)
@@ -146,7 +146,7 @@ class GUI extends Phaser.Scene {
 
     // If game over text exists, reposition it
     if (this.gameOverText) {
-      this.gameOverText.setPosition(centerX, height / 2 - 50);
+      this.gameOverText.setPosition(centerX, height / 2 - 70);
       this.menuButton.setPosition(centerX, height / 2 + 20);
     }
   }

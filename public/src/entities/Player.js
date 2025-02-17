@@ -84,7 +84,7 @@ class Player extends Phaser.GameObjects.Container {
 
     this.stress = Math.min(this.stress + amount, 100);
 
-    if (this.stress >= this.stressCap * 0.75 && !this.highStress) {
+    if (this.stress >= this.stressCap * .9 || this.stress >= this.stressCap * 0.75 && !this.highStress) {
       this.highStress = true;
       this.scene.sound.play("playerHighStress");
     }

@@ -82,7 +82,7 @@ class PauseMenu extends Phaser.Scene {
     this.background.fillRect(0, 0, width, height);
 
     // Reposition UI elements
-    this.titleText.setPosition(centerX, centerY - 50);
+    this.titleText.setPosition(centerX, centerY - 70);
     this.resumeButton.setPosition(centerX, centerY);
     this.restartButton.setPosition(centerX, centerY + 50);
     this.quitButton.setPosition(centerX, centerY + 100);
