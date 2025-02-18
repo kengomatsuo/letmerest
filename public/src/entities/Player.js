@@ -25,6 +25,7 @@ class Player extends Phaser.GameObjects.Container {
 
     // Create the pointer sprite (attack direction indicator)
     this.pointerSprite = scene.add.sprite(0, 0, "pointer");
+    this.pointerSprite.setVisible(false) // Change for when weapon sprite ready
     this.pointerSprite.setOrigin(0.5);
 
     // Create the player sprite

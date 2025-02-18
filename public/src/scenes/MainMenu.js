@@ -51,12 +51,14 @@ class MainMenu extends Phaser.Scene {
         .setOrigin(0.5);
       // Listener for clicking anywhere to continue
       this.input.once("pointerdown", () => {
-        this.mainSettings(centerX, centerY);
+        this.mainSettings();
       });
-    } else this.mainSettings(centerX, centerY);
+    } else this.mainSettings();
   }
 
-  mainSettings(centerX, centerY) {
+  mainSettings() {
+    const centerX = this.scale.width / 2;
+    const centerY = this.scale.height / 2;
     if (this.audioManager && this.continueText) {
       this.continueText.destroy();
       this.registry.events.emit("main-menu");
