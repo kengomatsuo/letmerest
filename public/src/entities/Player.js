@@ -130,7 +130,7 @@ class Player extends Phaser.GameObjects.Container {
     // Play hit sound
     else {
       if (this.stress < this.stressCap * 0.75) this.highStress = false;
-      this.scene.sound.play("playerHit");
+      this.scene.sound.play("playerHit", {detune: this.stress / this.stressCap * 1000});
     }
 
     if (this.stress === 100) {
@@ -173,7 +173,7 @@ class Player extends Phaser.GameObjects.Container {
       this.firingAngle
     );
     this.projectiles.add(projectile);
-    this.scene.sound.play("shoot", { volume: 0.6 });
+    this.scene.sound.play("shoot", { volume: 0.6, detune: Phaser.Math.Between(-200, 200) });
   }
 
   increaseAttackSpeed(amount) {
