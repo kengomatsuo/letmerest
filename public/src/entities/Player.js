@@ -25,7 +25,7 @@ class Player extends Phaser.GameObjects.Container {
 
     // Create the pointer sprite (attack direction indicator)
     this.pointerSprite = scene.add.sprite(0, 0, "pointer");
-    this.pointerSprite.setVisible(false) // Change for when weapon sprite ready
+    this.pointerSprite.setVisible(false); // Change for when weapon sprite ready
     this.pointerSprite.setOrigin(0.5);
 
     // Create the player sprite
@@ -35,6 +35,9 @@ class Player extends Phaser.GameObjects.Container {
     // Add both sprites to this container
     this.add(this.playerSprite);
     this.add(this.pointerSprite);
+
+    // Define animations
+    this.defineAnimations(scene);
 
     // Keyboard Input Handling
     this.cursors = scene.input.keyboard.createCursorKeys();
@@ -58,6 +61,32 @@ class Player extends Phaser.GameObjects.Container {
     this.startShooting();
   }
 
+  defineAnimations(scene) {
+    scene.anims.create({
+      key: 'idle',
+      frames: [
+        { key: 'player', frame: 'Idle 0.aseprite' },
+        { key: 'player', frame: 'Idle 1.aseprite' },
+        { key: 'player', frame: 'Idle 2.aseprite' },
+        { key: 'player', frame: 'Idle 1.aseprite' },
+      ],
+      frameRate: 5,
+      repeat: -1,
+    });
+
+    scene.anims.create({
+      key: 'run',
+      frames: scene.anims.generateFrameNames('player', {
+        prefix: 'Run ',
+        start: 0,
+        end: 5,
+        suffix: '.aseprite',
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
+
   move() {
     let moveX = 0;
     let moveY = 0;
@@ -75,8 +104,17 @@ class Player extends Phaser.GameObjects.Container {
         Math.cos(angle) * this.speed,
         Math.sin(angle) * this.speed
       );
+      this.playerSprite.play('run', true);
+
+      // Flip the sprite based on movement direction
+      if (moveX < 0) {
+        this.playerSprite.flipX = true;
+      } else if (moveX > 0) {
+        this.playerSprite.flipX = false;
+      }
     } else {
       this.body.setVelocity(0);
+      this.playerSprite.play('idle', true);
     }
   }
 
@@ -85,14 +123,15 @@ class Player extends Phaser.GameObjects.Container {
 
     this.stress = Math.min(this.stress + amount, 100);
 
-    if (this.stress >= this.stressCap * .9 || this.stress >= this.stressCap * 0.75 && !this.highStress) {
+    if (this.stress >= this.stressCap * 0.9 || (this.stress >= this.stressCap * 0.75 && !this.highStress)) {
       this.highStress = true;
       this.scene.sound.play("playerHighStress");
     }
     // Play hit sound
     else {
       if (this.stress < this.stressCap * 0.75) this.highStress = false;
-      this.scene.sound.play("playerHit");}
+      this.scene.sound.play("playerHit");
+    }
 
     if (this.stress === 100) {
       this.die();

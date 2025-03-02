@@ -135,7 +135,7 @@ class GUI extends Phaser.Scene {
     const { width, height } = gameSize;
     const centerX = width / 2;
 
-    if (this.background) {
+    if (this.gameOverText) {
       this.background.clear();
       this.background.fillStyle(0x000000, 0.5);
       this.background.fillRect(0, 0, width, height);

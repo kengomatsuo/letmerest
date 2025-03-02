@@ -5,11 +5,12 @@ import PauseMenu from "./src/scenes/PauseMenu.js";
 import MainMenu from "./src/scenes/MainMenu.js";
 
 const config = {
+
   type: Phaser.AUTO,
   width: 800,
   height: 600,
   render: {
-    pixelArt: true, // Ensures sharp pixels
+    smoothPixelArt: true,
   },
   scene: [MainMenu, AudioManager, MainScene, GUI, PauseMenu],
   audio: {
@@ -38,3 +39,5 @@ const config = {
 };
 
 const game = new Phaser.Game(config);
+
+this.load.setDefaultTextureFilter(Phaser.Textures.FilterMode.NEAREST);

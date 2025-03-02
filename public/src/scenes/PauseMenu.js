@@ -23,27 +23,43 @@ class PauseMenu extends Phaser.Scene {
 
     // "Game Paused" text
     this.titleText = this.add
-      .bitmapText(centerX, centerY - 70, "titleFont", "Game Paused", -40)
+      .text(centerX, centerY - 70, "Game Paused", {
+        fontFamily: "DePixelHalbfett",
+        fontSize: "40px",
+        resolution: 10
+      })
       .setOrigin(0.5);
 
     // Resume button
     this.resumeButton = this.add
-      .bitmapText(centerX, centerY, "textFont", "Resume Game", -24)
-      .setTintFill(0x00ff00)
+      .text(centerX, centerY, "Resume Game", {
+        fontFamily: "DePixelKlein",
+        fontSize: "24px",
+        color: "#00ff00",
+        resolution: 10
+      })
       .setOrigin(0.5)
       .setInteractive();
 
     // Restart button
     this.restartButton = this.add
-      .bitmapText(centerX, centerY + 50, "textFont", "Restart", -24)
-      .setTintFill(0xffff00)
+      .text(centerX, centerY + 50, "Restart", {
+        fontFamily: "DePixelKlein",
+        fontSize: "24px",
+        color: "#ffff00",
+        resolution: 10
+      })
       .setOrigin(0.5)
       .setInteractive();
 
     // Quit button
     this.quitButton = this.add
-      .bitmapText(centerX, centerY + 100, "textFont", "Quit to Main Menu", -24)
-      .setTintFill(0xff0000)
+      .text(centerX, centerY + 100, "Quit to Main Menu", {
+        fontFamily: "DePixelKlein",
+        fontSize: "24px",
+        color: "#ff0000",
+        resolution: 10
+      })
       .setOrigin(0.5)
       .setInteractive();
 
@@ -52,11 +68,10 @@ class PauseMenu extends Phaser.Scene {
       this.sound.play("click", { volume: 0.6 });
       this.resumeGame();
     });
-    // this.input.keyboard.on("keydown-ESC", () => {
-    //   this.sound.play("click", { volume: 0.6 });
-
-    //   this.resumeGame();
-    // });
+    this.input.keyboard.on("keydown-ESC", () => {
+      this.sound.play("click", { volume: 0.6 });
+      this.resumeGame();
+    });
 
     this.restartButton.on("pointerdown", () => {
       this.sound.play("click", { volume: 0.6 });

@@ -35,17 +35,23 @@ class MainMenu extends Phaser.Scene {
 
     // Title text
     this.titleText = this.add
-      .bitmapText(centerX, centerY - 100, "titleFont", "Let Me Rest!", -48)
+      .text(centerX, centerY - 100, "Let Me Rest!", {
+        fontFamily: "DePixelHalbfett",
+        fontSize: "48px",
+        resolution: 10
+      })
       .setOrigin(0.5);
 
     if (!this.audioManager.currentMusic) {
       this.continueText = this.add
-        .bitmapText(
+        .text(
           centerX,
           centerY + 60,
-          "textFont",
-          "Click anywhere to continue",
-          -32
+          "Click anywhere to continue", {
+            fontFamily: "DePixelKlein",
+            fontSize: "32px",
+            resolution: 10
+          }
         )
         .setAlpha(0.8)
         .setOrigin(0.5);
@@ -65,26 +71,37 @@ class MainMenu extends Phaser.Scene {
 
       // Speaker button
       this.speakerButton = this.add
-        .bitmapText(
+        .text(
           centerX,
           centerY,
-          "textFont",
           this.isMusicPlaying ? "Sound: on" : "Sound: off",
-          -32
+          {
+            fontFamily: "DePixelKlein",
+            fontSize: "32px",
+            resolution: 10
+          }
         )
         .setOrigin(0.5)
         .setInteractive();
 
       // Start Game button
       this.startButton = this.add
-        .bitmapText(centerX, centerY + 60, "textFont", "Start Game", -32)
+        .text(centerX, centerY + 60, "Start Game", {
+          fontFamily: "DePixelKlein",
+          fontSize: "32px",
+          resolution: 10
+        })
         .setTintFill(0x00ff00)
         .setOrigin(0.5)
         .setInteractive();
 
       // Quit Game button
       this.quitButton = this.add
-        .bitmapText(centerX, centerY + 120, "textFont", "Quit Game", -32)
+        .text(centerX, centerY + 120, "Quit Game", {
+          fontFamily: "DePixelKlein",
+          fontSize: "32px",
+          resolution: 10
+        })
         .setTintFill(0xff0000)
         .setOrigin(0.5)
         .setInteractive();

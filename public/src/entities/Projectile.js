@@ -1,6 +1,6 @@
 class Projectile extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, angle) {
-    super(scene, x, y, "projectile");
+    super(scene, x, y, "projectile").setScale(2);
     scene.add.existing(this);
     scene.physics.add.existing(this);
 

@@ -7,14 +7,21 @@ class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.atlas('player', 'assets/sprites/cropped_player.png', "assets/sprites/player.json");
+        // this.load.image('background', 'assets/sprites/Background.png');
+        this.load.spritesheet('floor', 'assets/textures/Floor.png', {
+            frameWidth: 144,
+            frameHeight: 144
+        });
+        this.load.atlas('player', 'assets/sprites/Player.png', "assets/sprites/player.json");
         this.load.image('enemy', 'assets/sprites/FolderFloat.png');
-        this.load.image('bullet', '../../assets/bullet.png');
+        this.load.image('projectile', 'assets/sprites/Paper.png');
         this.load.image('pointer', '../../assets/pointer.png');
     }
 
     create() {
         this.gameTimer = 0;
+
+        this.add.tileSprite(400, 300, 2400, 1800, 'floor');
 
         this.player = new Player(this, 400, 300);
         this.cameras.main.startFollow(this.player, true, 1, 1);

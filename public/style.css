@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'DePixelKlein';
+  src: url('/assets/fonts/DePixelKlein.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'DePixel';
+  src: url('assets/fonts/DePixelHalbfett.ttf') format('truetype');
+}
