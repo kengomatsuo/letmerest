@@ -14,6 +14,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     // Angle
     this.setRotation(angle);
+    this.body.setCircle(15);
     
     // Calculate velocity to move toward target
     this.setVelocity(

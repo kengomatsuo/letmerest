@@ -30,7 +30,7 @@ class Player extends Phaser.GameObjects.Container {
 
     // Create the player sprite
     this.playerSprite = scene.add.sprite(0, 0, "player");
-    this.playerSprite.setOrigin(0.5);
+    this.playerSprite.setOrigin(0.5, 0.9);
 
     // Add both sprites to this container
     this.add(this.playerSprite);
@@ -69,6 +69,7 @@ class Player extends Phaser.GameObjects.Container {
         { key: 'player', frame: 'Idle 1.aseprite' },
         { key: 'player', frame: 'Idle 2.aseprite' },
         { key: 'player', frame: 'Idle 1.aseprite' },
+        { key: 'player', frame: 'Idle 0.aseprite' },
       ],
       frameRate: 5,
       repeat: -1,
@@ -96,6 +97,16 @@ class Player extends Phaser.GameObjects.Container {
     if (this.cursors.right.isDown || this.keys.D.isDown) moveX = 1;
     if (this.cursors.up.isDown || this.keys.W.isDown) moveY = -1;
     if (this.cursors.down.isDown || this.keys.S.isDown) moveY = 1;
+
+    // Handle cases where both left and right keys are pressed
+    if ((this.cursors.left.isDown || this.keys.A.isDown) && (this.cursors.right.isDown || this.keys.D.isDown)) {
+      moveX = 0;
+    }
+
+    // Handle cases where both up and down keys are pressed
+    if ((this.cursors.up.isDown || this.keys.W.isDown) && (this.cursors.down.isDown || this.keys.S.isDown)) {
+      moveY = 0;
+    }
 
     // Normalize diagonal movement
     if (moveX !== 0 || moveY !== 0) {
