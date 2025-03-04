@@ -33,8 +33,8 @@ class AudioManager extends Phaser.Scene {
     }, this);
 
     this.registry.events.on("pause-game", () => {
-      console.log("Pause-game event received");
       this.playMusic("mainMenuBgm");
+      console.log("Pause-game event received");
     }, this);
 
     this.registry.events.on("main-menu", () => {
@@ -71,7 +71,7 @@ class AudioManager extends Phaser.Scene {
       newMusic.seek = oldMusic.seek; // Sync playback time
       // console.log(oldMusic, newMusic);
       console.log("Crossfade started");
-      oldMusic.setVolume(1);
+      oldMusic.setVolume(0.6);
       // **Tween for fading out old music**
       this.tweens.add({
         targets: oldMusic,
@@ -91,7 +91,11 @@ class AudioManager extends Phaser.Scene {
       });
     } else {
       console.log("No previous music, playing new track directly.");
-      newMusic.setVolume(1);
+      this.tweens.add({
+        targets: newMusic,
+        volume: .6,
+        duration: fadeDuration,
+      });
     }
 
     this.currentMusic = newMusic;

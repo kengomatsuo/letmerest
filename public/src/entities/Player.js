@@ -68,6 +68,7 @@ class Player extends Phaser.GameObjects.Container {
         { key: "player", frame: "Idle 0.aseprite" },
         { key: "player", frame: "Idle 1.aseprite" },
         { key: "player", frame: "Idle 2.aseprite" },
+        { key: "player", frame: "Idle 2.aseprite" },
         { key: "player", frame: "Idle 1.aseprite" },
         { key: "player", frame: "Idle 0.aseprite" },
       ],
@@ -174,7 +175,7 @@ class Player extends Phaser.GameObjects.Container {
 
   die() {
     this.scene.registry.events.emit("game-over");
-    
+
     // Remove pointer movement event
     this.scene.input.off("pointermove");
   }
