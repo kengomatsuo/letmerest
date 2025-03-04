@@ -41,7 +41,7 @@ class GUI extends Phaser.Scene {
     });
 
     // Name display (Top-left)
-    this.nameText = this.add.bitmapText(10, 10, "textFont", "Your name", -20);
+    this.nameText = this.add.bitmapText(10, 10, "textFont", "Press ESC to Pause", -20);
 
     // Health bar background (red)
     this.healthBarBg = this.add.graphics();
