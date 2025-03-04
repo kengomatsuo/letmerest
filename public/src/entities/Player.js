@@ -139,10 +139,8 @@ class Player extends Phaser.GameObjects.Container {
       this.scene.sound.play("playerHighStress");
     }
     // Play hit sound
-    else {
       if (this.stress < this.stressCap * 0.75) this.highStress = false;
       this.scene.sound.play("playerHit", {detune: this.stress / this.stressCap * 1000});
-    }
 
     if (this.stress === 100) {
       this.die();

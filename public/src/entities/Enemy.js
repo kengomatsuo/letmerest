@@ -11,6 +11,30 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.health = 50;
     this.stunned = false;
 
+    // Define the animation
+    this.defineAnimations(scene);
+
+    // Play the animation
+    this.play("enemyFloat");
+
+    scene.physics.add.overlap(this, scene.player, (enemy, player) => {
+      player.takeDamage(this.damage);
+    });
+  }
+
+  defineAnimations(scene) {
+    scene.anims.create({
+      key: "enemyFloat",
+      frames: scene.anims.generateFrameNames("enemy", {
+        prefix: "FolderFloat ",
+        start: 0,
+        end: 13,
+        suffix: ".aseprite",
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
       player.takeDamage(this.damage);
     });
@@ -29,7 +53,10 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   takeDamage(amount, knockback) {
-    this.scene.sound.play("enemyHit", { volume: 0.6, detune: Phaser.Math.Between(-1000, 1000) });
+    this.scene.sound.play("enemyHit", {
+      volume: 0.6,
+      detune: Phaser.Math.Between(-1000, 1000),
+    });
     this.health -= amount;
 
     if (this.health <= 0) {

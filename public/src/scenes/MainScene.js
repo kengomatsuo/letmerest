@@ -12,8 +12,8 @@ class MainScene extends Phaser.Scene {
             frameWidth: 144,
             frameHeight: 144
         });
-        this.load.atlas('player', 'assets/sprites/Player.png', "assets/sprites/player.json");
-        this.load.image('enemy', 'assets/sprites/FolderFloat.png');
+        this.load.atlas('player', 'assets/sprites/Player.png', "assets/sprites/Player.json");
+        this.load.atlas('enemy', 'assets/sprites/FolderFloat.png', "assets/sprites/FolderFloat.json");
         this.load.image('projectile', 'assets/sprites/Paper.png');
         this.load.image('pointer', '../../assets/pointer.png');
     }
