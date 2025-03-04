@@ -86,7 +86,7 @@ class AudioManager extends Phaser.Scene {
       // **Tween for fading in new music**
       this.tweens.add({
         targets: newMusic,
-        volume: 1,
+        volume: .6,
         duration: fadeDuration,
       });
     } else {

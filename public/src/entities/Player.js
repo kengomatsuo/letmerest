@@ -156,6 +156,11 @@ class Player extends Phaser.GameObjects.Container {
     if (this.stress === 100) {
       this.die();
     } else {
+      this.playerSprite.setTintFill(0xff0000);
+      this.scene.time.delayedCall(150, () => {
+        this.playerSprite.clearTint();
+      });
+
       this.damageCooldown = true;
       this.scene.time.delayedCall(300, () => {
         this.damageCooldown = false;
@@ -169,7 +174,7 @@ class Player extends Phaser.GameObjects.Container {
 
   die() {
     this.scene.registry.events.emit("game-over");
-
+    
     // Remove pointer movement event
     this.scene.input.off("pointermove");
   }
