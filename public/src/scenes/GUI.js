@@ -41,7 +41,11 @@ class GUI extends Phaser.Scene {
     });
 
     // Name display (Top-left)
-    this.nameText = this.add.bitmapText(10, 10, "textFont", "Press ESC to Pause", -20);
+    this.nameText = this.add.text(10, 10, "Press ESC to Pause", {
+      fontFamily: "DePixelKlein",
+      fontSize: "20px",
+      resolution: 10
+    });
 
     // Health bar background (red)
     this.healthBarBg = this.add.graphics();
@@ -54,19 +58,35 @@ class GUI extends Phaser.Scene {
     this.healthBar.fillRect(10, 40, 100, 15);
 
     // Health text (next to health bar)
-    this.healthText = this.add.bitmapText(115, 40, "textFont", "", -14);
+    this.healthText = this.add.text(115, 40, "", {
+      fontFamily: "DePixelKlein",
+      fontSize: "14px",
+      resolution: 10
+    });
 
     // FPS display (Top-left below health)
-    this.fpsText = this.add.bitmapText(10, 70, "textFont", "", -20);
+    this.fpsText = this.add.text(10, 70, "", {
+      fontFamily: "DePixelKlein",
+      fontSize: "20px",
+      resolution: 10
+    });
 
     // Timer (Top-center)
     this.timerText = this.add
-      .bitmapText(centerX, 10, "textFont", "", -32)
+      .text(centerX, 10, "00:00", {
+        fontFamily: "DePixelKlein",
+        fontSize: "32px",
+        resolution: 10
+      })
       .setOrigin(0.5, 0);
 
     // Score display (Top-center below timer)
     this.scoreText = this.add
-      .bitmapText(centerX, 40, "textFont", "", -20)
+      .text(centerX, 40, "", {
+        fontFamily: "DePixelKlein",
+        fontSize: "20px",
+        resolution: 10
+      })
       .setOrigin(0.5, 0);
 
     // Listen for score updates
@@ -112,13 +132,21 @@ class GUI extends Phaser.Scene {
 
     // "Game Over" text (Centered)
     this.gameOverText = this.add
-      .bitmapText(centerX, centerY - 70, "titleFont", "Game Over", -42)
+      .text(centerX, centerY - 70, "Game Over", {
+        fontFamily: "DePixelKlein",
+        fontSize: "42px",
+        resolution: 10
+      })
       .setOrigin(0.5);
 
     // Back to Main Menu button (Centered)
     this.time.delayedCall(3300, () => {
       this.menuButton = this.add
-        .bitmapText(centerX, centerY + 20, "textFont", "Back to Main Menu", -24)
+        .text(centerX, centerY + 20, "Back to Main Menu", {
+          fontFamily: "DePixelKlein",
+          fontSize: "24px",
+          resolution: 10
+        })
         .setOrigin(0.5)
         .setInteractive()
         .on("pointerdown", () => {
