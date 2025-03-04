@@ -61,21 +61,21 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
 
     if (this.health <= 0) {
       this.die();
-    }
-
-    // Flash white effect
-    this.setTintFill(0xffffff);
-    this.scene.time.delayedCall(150, () => {
-      this.clearTint();
-    });
-
-    if (knockback) {
-      this.stunned = true;
-      this.setVelocity(-this.body.velocity.x, -this.body.velocity.y);
-      // Add a short delay before allowing movement again
-      this.scene.time.delayedCall(100, () => {
-        this.stunned = false;
+    } else {
+      // Flash white effect
+      this.setTintFill(0xffffff);
+      this.scene.time.delayedCall(150, () => {
+        this.clearTint();
       });
+
+      if (knockback) {
+        this.stunned = true;
+        this.setVelocity(-this.body.velocity.x, -this.body.velocity.y);
+        // Add a short delay before allowing movement again
+        this.scene.time.delayedCall(100, () => {
+          this.stunned = false;
+        });
+      }
     }
   }
 

@@ -63,25 +63,25 @@ class Player extends Phaser.GameObjects.Container {
 
   defineAnimations(scene) {
     scene.anims.create({
-      key: 'idle',
+      key: "idle",
       frames: [
-        { key: 'player', frame: 'Idle 0.aseprite' },
-        { key: 'player', frame: 'Idle 1.aseprite' },
-        { key: 'player', frame: 'Idle 2.aseprite' },
-        { key: 'player', frame: 'Idle 1.aseprite' },
-        { key: 'player', frame: 'Idle 0.aseprite' },
+        { key: "player", frame: "Idle 0.aseprite" },
+        { key: "player", frame: "Idle 1.aseprite" },
+        { key: "player", frame: "Idle 2.aseprite" },
+        { key: "player", frame: "Idle 1.aseprite" },
+        { key: "player", frame: "Idle 0.aseprite" },
       ],
       frameRate: 5,
       repeat: -1,
     });
 
     scene.anims.create({
-      key: 'run',
-      frames: scene.anims.generateFrameNames('player', {
-        prefix: 'Run ',
+      key: "run",
+      frames: scene.anims.generateFrameNames("player", {
+        prefix: "Run ",
         start: 0,
         end: 5,
-        suffix: '.aseprite',
+        suffix: ".aseprite",
       }),
       frameRate: 10,
       repeat: -1,
@@ -99,12 +99,18 @@ class Player extends Phaser.GameObjects.Container {
     if (this.cursors.down.isDown || this.keys.S.isDown) moveY = 1;
 
     // Handle cases where both left and right keys are pressed
-    if ((this.cursors.left.isDown || this.keys.A.isDown) && (this.cursors.right.isDown || this.keys.D.isDown)) {
+    if (
+      (this.cursors.left.isDown || this.keys.A.isDown) &&
+      (this.cursors.right.isDown || this.keys.D.isDown)
+    ) {
       moveX = 0;
     }
 
     // Handle cases where both up and down keys are pressed
-    if ((this.cursors.up.isDown || this.keys.W.isDown) && (this.cursors.down.isDown || this.keys.S.isDown)) {
+    if (
+      (this.cursors.up.isDown || this.keys.W.isDown) &&
+      (this.cursors.down.isDown || this.keys.S.isDown)
+    ) {
       moveY = 0;
     }
 
@@ -115,7 +121,7 @@ class Player extends Phaser.GameObjects.Container {
         Math.cos(angle) * this.speed,
         Math.sin(angle) * this.speed
       );
-      this.playerSprite.play('run', true);
+      this.playerSprite.play("run", true);
 
       // Flip the sprite based on movement direction
       if (moveX < 0) {
@@ -125,7 +131,7 @@ class Player extends Phaser.GameObjects.Container {
       }
     } else {
       this.body.setVelocity(0);
-      this.playerSprite.play('idle', true);
+      this.playerSprite.play("idle", true);
     }
   }
 
@@ -134,22 +140,27 @@ class Player extends Phaser.GameObjects.Container {
 
     this.stress = Math.min(this.stress + amount, 100);
 
-    if (this.stress >= this.stressCap * 0.9 || (this.stress >= this.stressCap * 0.75 && !this.highStress)) {
+    if (
+      this.stress >= this.stressCap * 0.9 ||
+      (this.stress >= this.stressCap * 0.75 && !this.highStress)
+    ) {
       this.highStress = true;
       this.scene.sound.play("playerHighStress");
     }
     // Play hit sound
-      if (this.stress < this.stressCap * 0.75) this.highStress = false;
-      this.scene.sound.play("playerHit", {detune: this.stress / this.stressCap * 1000});
+    if (this.stress < this.stressCap * 0.75) this.highStress = false;
+    this.scene.sound.play("playerHit", {
+      detune: (this.stress / this.stressCap) * 1000,
+    });
 
     if (this.stress === 100) {
       this.die();
+    } else {
+      this.damageCooldown = true;
+      this.scene.time.delayedCall(300, () => {
+        this.damageCooldown = false;
+      });
     }
-
-    this.damageCooldown = true;
-    this.scene.time.delayedCall(300, () => {
-      this.damageCooldown = false;
-    });
   }
 
   heal(amount) {
@@ -182,7 +193,10 @@ class Player extends Phaser.GameObjects.Container {
       this.firingAngle
     );
     this.projectiles.add(projectile);
-    this.scene.sound.play("shoot", { volume: 0.6, detune: Phaser.Math.Between(-200, 200) });
+    this.scene.sound.play("shoot", {
+      volume: 0.6,
+      detune: Phaser.Math.Between(-200, 200),
+    });
   }
 
   increaseAttackSpeed(amount) {
