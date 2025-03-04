@@ -63,6 +63,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
       this.die();
     }
 
+    // Flash white effect
+    this.setTintFill(0xffffff);
+    this.scene.time.delayedCall(150, () => {
+      this.clearTint();
+    });
+
     if (knockback) {
       this.stunned = true;
       this.setVelocity(-this.body.velocity.x, -this.body.velocity.y);

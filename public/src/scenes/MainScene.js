@@ -20,10 +20,12 @@ class MainScene extends Phaser.Scene {
 
     create() {
         this.gameTimer = 0;
+        this.physics.world.setBounds(0, 0, 2400, 1800);
 
-        this.add.tileSprite(400, 300, 2400, 1800, 'floor');
+        this.add.tileSprite(1200, 900, 2400, 1800, 'floor');
 
-        this.player = new Player(this, 400, 300);
+        this.player = new Player(this, 1200, 900);
+        this.player.body.setCollideWorldBounds(true);
         this.cameras.main.startFollow(this.player, true, 1, 1);
         
         this.cursors = this.input.keyboard.createCursorKeys();
