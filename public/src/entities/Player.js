@@ -7,7 +7,7 @@ class Player extends Phaser.GameObjects.Container {
     scene.physics.world.enable(this);
 
     // this.body = this.body as Phaser.Physics.Arcade.Body;
-    this.body.setCollideWorldBounds(false);
+    this.body.setCollideWorldBounds(true);
     this.body.setSize(32, 32); // Adjust size as needed
     this.body.setOffset(-16, -16); // Center the body properly
 

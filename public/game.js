@@ -10,7 +10,9 @@ const config = {
   width: 800,
   height: 600,
   render: {
-    smoothPixelArt: true,
+    smoothPixelArt: false,
+    pixelArt: false,
+    antialias: true,
   },
   scene: [MainMenu, AudioManager, MainScene, GUI, PauseMenu],
   audio: {
