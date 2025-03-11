@@ -1,6 +1,8 @@
 class GUI extends Phaser.Scene {
   constructor() {
     super({ key: "GUI", active: false });
+    this.lowHealthThreshold = 75; // Define a low health threshold
+    this.isVibrating = false; // Track if the health bar is currently vibrating
   }
 
   preload() {
@@ -13,6 +15,11 @@ class GUI extends Phaser.Scene {
 
     // Listen for window resize and adjust UI elements
     this.scale.on("resize", this.resizeUI, this);
+
+    // Joystick
+    this.input.on("pointerdown", this.createJoystick, this);
+    this.input.on("pointermove", this.updateJoystick, this);
+    this.input.on("pointerup", this.removeJoystick, this);
   }
 
   createUI() {
@@ -48,25 +55,34 @@ class GUI extends Phaser.Scene {
       resolution: 10
     });
 
-    // Health bar background (red)
-    this.healthBarBg = this.add.graphics();
-    this.healthBarBg.fillStyle(0xffffff, 1);
-    this.healthBarBg.fillRect(10, 40, 100, 15);
+    // Stress bar background (white)
+    this.stressBarBg = this.add.graphics();
+    this.stressBarBg.fillStyle(0xffffff, 1);
+    this.stressBarBg.fillRect(10, 40, 100, 15);
 
-    // Health bar foreground (green)
-    this.healthBar = this.add.graphics();
-    this.healthBar.fillStyle(0x00ff00, 1);
-    this.healthBar.fillRect(10, 40, 100, 15);
+    // Stress bar foreground (red)
+    this.stressBar = this.add.graphics();
+    this.stressBar.fillStyle(0x00ff00, 1);
+    this.stressBar.fillRect(10, 40, 0, 15);
 
     // Health text (next to health bar)
-    this.healthText = this.add.text(115, 40, "", {
+    this.stressText = this.add.text(115, 40, "", {
       fontFamily: "DePixelKlein",
       fontSize: "14px",
       resolution: 10
     });
 
+    this.procrastinationBarBg = this.add.graphics();
+    this.procrastinationBarBg.fillStyle(0xffffff, 1);
+    this.procrastinationBarBg.fillRect(10, 60, 70, 10);
+
+    this.procrastinationBar = this.add.graphics();
+    this.procrastinationBar.fillStyle(0x0000ff, 1);
+    this.procrastinationBar.fillRect(10, 60, 0, 10);
+
+
     // FPS display (Top-left below health)
-    this.fpsText = this.add.text(10, 70, "", {
+    this.fpsText = this.add.text(10, 90, "", {
       fontFamily: "DePixelKlein",
       fontSize: "20px",
       resolution: 10
@@ -83,7 +99,7 @@ class GUI extends Phaser.Scene {
 
     // Score display (Top-center below timer)
     this.scoreText = this.add
-      .text(centerX, 40, "", {
+      .text(centerX, 40, "Score: 0", {
         fontFamily: "DePixelKlein",
         fontSize: "20px",
         resolution: 10
@@ -115,6 +131,67 @@ class GUI extends Phaser.Scene {
     });
   }
 
+  createJoystick(pointer) {
+    if (this.joystickActive) return;
+    this.joystickActive = true;
+    if (this.player)
+    this.player.setJoystickActive(true)
+    
+    const { x, y } = pointer;
+    
+    // Joystick base
+    this.joystickBase = this.add.circle(x, y, 50, 0x888888, 0.5);
+    
+    // Joystick thumb
+    this.joystickThumb = this.add.circle(x, y, 20, 0xffffff, 0.8);
+  }
+
+  updateJoystick(pointer) {
+    if (!this.joystickActive) return;
+    
+    const { x, y } = pointer;
+    const dx = x - this.joystickBase.x;
+    const dy = y - this.joystickBase.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const maxDistance = 40;
+    
+    let angle = Math.atan2(dy, dx);
+    let magnitude = Math.min(distance / maxDistance, 1);
+    
+    this.player.joystickVector = {
+      x: Math.cos(angle) * magnitude,
+      y: Math.sin(angle) * magnitude,
+    };
+    
+    if (distance > maxDistance) {
+      this.joystickThumb.setPosition(
+        this.joystickBase.x + Math.cos(angle) * maxDistance,
+        this.joystickBase.y + Math.sin(angle) * maxDistance
+      );
+    } else {
+      this.joystickThumb.setPosition(x, y);
+    }
+  }
+
+  removeJoystick() {
+    if (!this.joystickActive) return;
+    
+    this.joystickActive = false;
+    if (this.player)
+    this.player.setJoystickActive(false)
+    this.player.joystickVector = { x: 0, y: 0 };
+    
+    this.joystickBase.destroy();
+    this.joystickThumb.destroy();
+    this.joystickBase = null;
+    this.joystickThumb = null;
+
+    // Stop player movement
+    if (this.player && this.player.body) {
+      this.player.body.setVelocity(0, 0);
+    }
+  }
+
   handleGameOver() {
     const width = this.scale.width;
     const height = this.scale.height;
@@ -126,10 +203,10 @@ class GUI extends Phaser.Scene {
     this.background.fillRect(0, 0, width, height);
 
     // Clear health bar
-    this.healthBar.clear();
-    this.healthBar.fillStyle(0xff0000, 1);
-    this.healthBar.fillRect(10, 40, 0, 15);
-    this.healthText.setText("0");
+    this.stressBar.clear();
+    this.stressBar.fillStyle(0xff0000, 1);
+    this.stressBar.fillRect(10, 40, this.player.stressCap, 15);
+    this.stressText.setText("0");
 
     // "Game Over" text (Centered)
     this.gameOverText = this.add
@@ -173,6 +250,9 @@ class GUI extends Phaser.Scene {
     // Reposition timer (Top-center)
     this.timerText.setPosition(centerX, 10);
 
+    // Reposition score (Top-center below timer)
+    this.scoreText.setPosition(centerX, 40);
+
     // If game over text exists, reposition it
     if (this.gameOverText) {
       this.gameOverText.setPosition(centerX, height / 2 - 70);
@@ -189,14 +269,19 @@ class GUI extends Phaser.Scene {
     this.fpsText.setText(`FPS: ${fps}`);
 
     if (this.player) {
-      const stress = Math.min(this.player.stress, 100);
-      const barWidth = (stress / 100) * 100;
+      const stress = this.player.stress;
+      const procrastinationBarWidth = this.player.procrastination;
+      const stressBarWidth = (stress / this.player.stressCap) * 100;
 
-      this.healthBar.clear();
-      this.healthBar.fillStyle(0xff0000, 1);
-      this.healthBar.fillRect(10, 40, barWidth, 15);
+      this.stressBar.clear();
+      this.stressBar.fillStyle(0xff0000, 1);
+      this.stressBar.fillRect(10, 40, stressBarWidth, 15);
 
-      this.healthText.setText(stress);
+      this.procrastinationBar.clear();
+      this.procrastinationBar.fillStyle(0x0000ff, 1);
+      this.procrastinationBar.fillRect(10, 60, procrastinationBarWidth, 10);
+
+      this.stressText.setText(stress);
     }
   }
 }

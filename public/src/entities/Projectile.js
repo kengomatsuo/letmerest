@@ -1,5 +1,5 @@
 class Projectile extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, angle) {
+  constructor(scene, x, y, angle, playerMissed, playerHitEnemy) {
     super(scene, x, y, "projectile").setScale(2);
     scene.add.existing(this);
     scene.physics.add.existing(this);
@@ -8,6 +8,7 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
     this.lifespan = 2000; 
     this.pierce = 1;
     this.damage = 20; 
+    this.procrastinationDamage = 5;
     this.knockback = 200;
 
     this.hitEnemies = new Set(); 
@@ -24,12 +25,15 @@ class Projectile extends Phaser.Physics.Arcade.Sprite {
 
     // Destroy projectile after lifespan
     scene.time.delayedCall(this.lifespan, () => {
+      if(this.hitEnemies.size === 0)
+        playerMissed(this.procrastinationDamage);
       this.destroy();
     });
 
     // Handle collision with enemies
     scene.physics.add.overlap(this, scene.enemies, (projectile, enemy) => {
       if (!this.hitEnemies.has(enemy)) {
+        playerHitEnemy(1);
         this.hitEnemies.add(enemy);
         enemy.takeDamage(this.damage, this.knockback); 
         if (this.pierce == 0) this.destroy(); 

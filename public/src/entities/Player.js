@@ -13,10 +13,20 @@ class Player extends Phaser.GameObjects.Container {
 
     this.stress = 0;
     this.stressCap = 100;
+    this.procrastination = 0;
+    this.procrastinationCap = 70;
     this.highStress = false;
+    this.detectionRadius = 100;
     this.shield = 0;
     this.speed = 200;
     this.projectiles = scene.add.group();
+
+    this.joystickActive = false;
+    this.joystickVector = { x: 0, y: 0 }; // Initialize joystick vector
+
+    this.setJoystickActive = (active) => {
+      this.joystickActive = active;
+    };
 
     // Attack properties
     this.attackSpeed = 1; // Shots per second
@@ -32,9 +42,15 @@ class Player extends Phaser.GameObjects.Container {
     this.playerSprite = scene.add.sprite(0, 0, "player");
     this.playerSprite.setOrigin(0.5, 0.9);
 
+    // Create the radius indicator
+    this.radiusGraphics = scene.add.graphics();
+    this.radiusGraphics.lineStyle(2, 0xff0000, 1); // Red outline
+    this.radiusGraphics.strokeCircle(0, 0, this.detectionRadius);
+
     // Add both sprites to this container
     this.add(this.playerSprite);
     this.add(this.pointerSprite);
+    this.add(this.radiusGraphics);
 
     // Define animations
     this.defineAnimations(scene);
@@ -57,8 +73,9 @@ class Player extends Phaser.GameObjects.Container {
       );
       this.pointerSprite.setRotation(this.firingAngle);
     });
-
-    this.startShooting();
+    this.scene.time.delayedCall(6000, () => {
+      this.startShooting();
+    });
   }
 
   defineAnimations(scene) {
@@ -93,26 +110,33 @@ class Player extends Phaser.GameObjects.Container {
     let moveX = 0;
     let moveY = 0;
 
-    // Keyboard movement
-    if (this.cursors.left.isDown || this.keys.A.isDown) moveX = -1;
-    if (this.cursors.right.isDown || this.keys.D.isDown) moveX = 1;
-    if (this.cursors.up.isDown || this.keys.W.isDown) moveY = -1;
-    if (this.cursors.down.isDown || this.keys.S.isDown) moveY = 1;
+    // Add joystick movement
+    if (this.joystickActive) {
+      moveX += this.joystickVector.x;
+      moveY += this.joystickVector.y;
+    } else {
+      console.log('movement not detected')
+      // Keyboard movement
+      if (this.cursors.left.isDown || this.keys.A.isDown) moveX = -1;
+      if (this.cursors.right.isDown || this.keys.D.isDown) moveX = 1;
+      if (this.cursors.up.isDown || this.keys.W.isDown) moveY = -1;
+      if (this.cursors.down.isDown || this.keys.S.isDown) moveY = 1;
 
-    // Handle cases where both left and right keys are pressed
-    if (
-      (this.cursors.left.isDown || this.keys.A.isDown) &&
-      (this.cursors.right.isDown || this.keys.D.isDown)
-    ) {
-      moveX = 0;
-    }
+      // Handle cases where both left and right keys are pressed
+      if (
+        (this.cursors.left.isDown || this.keys.A.isDown) &&
+        (this.cursors.right.isDown || this.keys.D.isDown)
+      ) {
+        moveX = 0;
+      }
 
-    // Handle cases where both up and down keys are pressed
-    if (
-      (this.cursors.up.isDown || this.keys.W.isDown) &&
-      (this.cursors.down.isDown || this.keys.S.isDown)
-    ) {
-      moveY = 0;
+      // Handle cases where both up and down keys are pressed
+      if (
+        (this.cursors.up.isDown || this.keys.W.isDown) &&
+        (this.cursors.down.isDown || this.keys.S.isDown)
+      ) {
+        moveY = 0;
+      }
     }
 
     // Normalize diagonal movement
@@ -184,19 +208,49 @@ class Player extends Phaser.GameObjects.Container {
     if (this.shootEvent) this.shootEvent.remove();
 
     this.shootEvent = this.scene.time.addEvent({
-      delay: 1000 / this.attackSpeed,
+      delay:
+        (1000 / this.attackSpeed) *
+        (1 - this.procrastination / this.procrastinationCap),
       callback: () => this.shoot(),
       callbackScope: this,
       loop: true,
     });
   }
 
+  getAttackDelay() {
+    const procrastinationFactor =
+      1 - this.procrastination / this.procrastinationCap; // Ranges from 1 to 0.3
+    return 1000 / (this.attackSpeed * procrastinationFactor);
+  }
+
+  updateShootingSpeed() {
+    if (this.shootEvent) {
+      this.shootEvent.delay = this.getAttackDelay();
+    }
+  }
+
+  playerMissed = (amount) => {
+    // console.log("You are procrastinating!");
+    this.procrastination = Math.min(
+      this.procrastination + amount,
+      this.procrastinationCap
+    );
+    this.updateShootingSpeed();
+  };
+
+  playerHitEnemy = (amount) => {
+    this.procrastination = Math.max(this.procrastination - amount, 0);
+    this.updateShootingSpeed();
+  };
+
   shoot() {
     const projectile = new Projectile(
       this.scene,
       this.x,
       this.y,
-      this.firingAngle
+      this.firingAngle,
+      this.playerMissed,
+      this.playerHitEnemy
     );
     this.projectiles.add(projectile);
     this.scene.sound.play("shoot", {

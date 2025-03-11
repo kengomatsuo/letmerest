@@ -42,4 +42,4 @@ const config = {
 
 const game = new Phaser.Game(config);
 
-this.load.setDefaultTextureFilter(Phaser.Textures.FilterMode.NEAREST);
+// this.load.setDefaultTextureFilter(Phaser.Textures.FilterMode.NEAREST);
