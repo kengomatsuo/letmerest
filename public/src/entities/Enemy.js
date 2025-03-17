@@ -24,6 +24,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.overlap(this, scene.player, (enemy, player) => {
       player.takeDamage(this.damage);
     });
+
+    console.log(scene.player.pointerHitbox);
+
+    scene.physics.add.overlap(this, scene.player.pointerHitbox, (enemy, pointerHitbox) => {
+      this.scene.registry.events.emit("panic")
+    } );
   }
 
   defineAnimations(scene) {

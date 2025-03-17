@@ -29,7 +29,7 @@ const config = {
   physics: {
     default: "arcade",
     arcade: {
-      debug: false,
+      debug: true,
       fps: 60, // Set physics FPS limit
     },
   },

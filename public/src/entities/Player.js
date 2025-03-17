@@ -16,6 +16,11 @@ class Player extends Phaser.GameObjects.Container {
     this.procrastination = 0;
     this.procrastinationCap = 70;
     this.highStress = false;
+
+    this.panic = false;
+    this.panicCooldown = 0;
+    this.burnout = false;
+
     this.detectionRadius = 100;
     this.shield = 0;
     this.speed = 200;
@@ -33,10 +38,30 @@ class Player extends Phaser.GameObjects.Container {
     this.shootEvent = null;
     this.firingAngle = 0; // Store the last cursor angle
 
-    // Create the pointer sprite (attack direction indicator)
+    // Create pointer sprite
     this.pointerSprite = scene.add.sprite(0, 0, "pointer");
-    this.pointerSprite.setVisible(false); // Change for when weapon sprite ready
-    this.pointerSprite.setOrigin(0.5);
+    this.pointerSprite.setVisible(false);
+
+    // Create circular hitbox using an invisible physics sprite
+    this.pointerHitbox = scene.physics.add.sprite(
+      this.x - 50,
+      this.y - 50,
+      "circleHitbox"
+    );
+    this.pointerHitbox.body.moves = false; // Prevent physics from moving it
+    this.scene.physics.add.existing(this.pointerHitbox);
+    this.pointerHitbox.setOrigin(0.5, 0.5); // Center the hitbox
+    this.pointerHitbox.setCircle(this.detectionRadius); // Makes the physics body behave like a circle
+    this.pointerHitbox.setVisible(false); // Hide if it's just for collisions
+    this.pointerHitbox.body.enable = false;
+
+    // Sync hitbox with pointer movement
+    scene.events.on("update", () => {
+      this.pointerHitbox.setPosition(
+        this.x - this.detectionRadius / 1.2,
+        this.y - this.detectionRadius / 1.2
+      );
+    });
 
     // Create the player sprite
     this.playerSprite = scene.add.sprite(0, 0, "player");
@@ -46,6 +71,7 @@ class Player extends Phaser.GameObjects.Container {
     this.radiusGraphics = scene.add.graphics();
     this.radiusGraphics.lineStyle(2, 0xff0000, 1); // Red outline
     this.radiusGraphics.strokeCircle(0, 0, this.detectionRadius);
+    this.radiusGraphics.setVisible(false);
 
     // Add both sprites to this container
     this.add(this.playerSprite);
@@ -65,17 +91,80 @@ class Player extends Phaser.GameObjects.Container {
     });
 
     scene.input.on("pointermove", (pointer) => {
-      this.firingAngle = Phaser.Math.Angle.Between(
-        this.x,
-        this.y,
-        pointer.worldX,
-        pointer.worldY
-      );
-      this.pointerSprite.setRotation(this.firingAngle);
+      if (!this.joystickActive) {
+        this.firingAngle = Phaser.Math.Angle.Between(
+          this.x,
+          this.y,
+          pointer.worldX,
+          pointer.worldY
+        );
+        this.pointerSprite.setRotation(this.firingAngle);
+      }
     });
+
     this.scene.time.delayedCall(6000, () => {
+      this.pointerHitbox.body.enable = true;
+      this.radiusGraphics.setVisible(true);
       this.startShooting();
     });
+
+    this.updateFiringAngle = () => {
+      if (this.joystickActive) {
+        this.firingAngle = Phaser.Math.Angle.Between(
+          0,
+          0,
+          this.joystickVector.x,
+          this.joystickVector.y
+        );
+        this.pointerSprite.setRotation(this.firingAngle);
+      }
+    };
+
+    // on register event panic increase attack speed by 3x and set procrastination to 0
+    this.scene.registry.events.on("panic", () => {
+      this.panic = true;
+      this.attackSpeed = 4;
+      this.procrastination = 0;
+      this.updateShootingSpeed();
+      this.panicCooldown = 60;
+
+      // disable hitbox collision
+      this.pointerHitbox.body.enable = false;
+      this.radiusGraphics.setVisible(false);
+
+      this.scene.time.addEvent({
+        delay: 1000, // 1 second
+        callback: () => {
+          if (this.panicCooldown > 0) {
+            this.panicCooldown--;
+            console.log(`Panic Cooldown: ${this.panicCooldown}`);
+          }
+          if (this.panicCooldown === 0) {
+            this.pointerHitbox.body.enable = true;
+          }
+        },
+        callbackScope: this,
+        loop: true,
+      });
+
+      // back to normal after 5 seconds
+      this.scene.time.delayedCall(7000, () => {
+        this.panic = false;
+        this.attackSpeed = 1;
+
+        // burnout
+        this.burnout = true;
+        this.updateShootingSpeed();
+      });
+
+      this.scene.time.delayedCall(17000, () => {
+        this.burnout = false;
+        this.updateShootingSpeed();
+      });
+    });
+
+    // Call updateFiringAngle in the update method or wherever appropriate
+    this.scene.events.on("update", this.updateFiringAngle, this);
   }
 
   defineAnimations(scene) {
@@ -115,7 +204,6 @@ class Player extends Phaser.GameObjects.Container {
       moveX += this.joystickVector.x;
       moveY += this.joystickVector.y;
     } else {
-      console.log('movement not detected')
       // Keyboard movement
       if (this.cursors.left.isDown || this.keys.A.isDown) moveX = -1;
       if (this.cursors.right.isDown || this.keys.D.isDown) moveX = 1;
@@ -225,12 +313,11 @@ class Player extends Phaser.GameObjects.Container {
 
   updateShootingSpeed() {
     if (this.shootEvent) {
-      this.shootEvent.delay = this.getAttackDelay();
+      this.shootEvent.delay = this.getAttackDelay() * (this.burnout ? 2 : 1);
     }
   }
 
   playerMissed = (amount) => {
-    // console.log("You are procrastinating!");
     this.procrastination = Math.min(
       this.procrastination + amount,
       this.procrastinationCap
@@ -249,6 +336,7 @@ class Player extends Phaser.GameObjects.Container {
       this.x,
       this.y,
       this.firingAngle,
+      this.panic,
       this.playerMissed,
       this.playerHitEnemy
     );
