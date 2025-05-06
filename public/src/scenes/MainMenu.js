@@ -95,9 +95,29 @@ class MainMenu extends Phaser.Scene {
         .setOrigin(0.5)
         .setInteractive();
 
+      // Settings button
+      this.settingsButton = this.add
+        .text(centerX, centerY + 120, "Settings", {
+          fontFamily: "DePixelKlein",
+          fontSize: "32px",
+          resolution: 10
+        })
+        .setTintFill(0x00ffff)
+        .setOrigin(0.5)
+        .setInteractive();
+
+      // Adjust Quit button position
+      this.quitButton.setPosition(centerX, centerY + 180);
+
+      // Navigate to Settings scene
+      this.settingsButton.on("pointerdown", () => {
+        this.sound.play("click", { volume: 0.6 });
+        this.scene.start("Settings");
+      });
+
       // Quit Game button
       this.quitButton = this.add
-        .text(centerX, centerY + 120, "Quit Game", {
+        .text(centerX, centerY + 180, "Quit Game", {
           fontFamily: "DePixelKlein",
           fontSize: "32px",
           resolution: 10
@@ -149,7 +169,8 @@ class MainMenu extends Phaser.Scene {
     if (this.continueText) this.continueText.setPosition(centerX, centerY + 60);
     if (this.speakerButton) this.speakerButton.setPosition(centerX, centerY);
     if (this.startButton) this.startButton.setPosition(centerX, centerY + 60);
-    if (this.quitButton) this.quitButton.setPosition(centerX, centerY + 120);
+    if (this.settingsButton) this.settingsButton.setPosition(centerX, centerY + 120);
+    if (this.quitButton) this.quitButton.setPosition(centerX, centerY + 180);
   }
 }
 

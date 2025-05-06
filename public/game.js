@@ -3,6 +3,7 @@ import MainScene from "./src/scenes/MainScene.js";
 import GUI from "./src/scenes/GUI.js";
 import PauseMenu from "./src/scenes/PauseMenu.js";
 import MainMenu from "./src/scenes/MainMenu.js";
+import Settings from "./src/scenes/Settings.js";
 
 const config = {
 
@@ -14,7 +15,7 @@ const config = {
     pixelArt: false,
     antialias: true,
   },
-  scene: [MainMenu, AudioManager, MainScene, GUI, PauseMenu],
+  scene: [MainMenu, AudioManager, MainScene, GUI, PauseMenu, Settings],
   audio: {
     disableWebAudio: false, // Ensure WebAudio API is used
     noAudio: false, // Ensure audio is enabled
