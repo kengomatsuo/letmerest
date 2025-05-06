@@ -108,7 +108,7 @@ class MainMenu extends Phaser.Scene {
 
       // Quit Game button
       this.quitButton = this.add
-        .text(centerX, centerY + 180, "Settings", {
+        .text(centerX, centerY + 180, "Quit Game", {
           fontFamily: "DePixelKlein",
           fontSize: "32px",
           resolution: 10
@@ -122,17 +122,6 @@ class MainMenu extends Phaser.Scene {
         this.sound.play("click", { volume: 0.6 });
         this.scene.start("Settings");
       });
-
-      // Quit Game button
-      this.quitButton = this.add
-        .text(centerX, centerY + 180, "Quit Game", {
-          fontFamily: "DePixelKlein",
-          fontSize: "32px",
-          resolution: 10
-        })
-        .setTintFill(0xff0000)
-        .setOrigin(0.5)
-        .setInteractive();
 
       // Toggle music when clicked
       this.speakerButton.on("pointerdown", () => {
