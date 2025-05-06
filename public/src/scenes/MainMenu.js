@@ -106,8 +106,16 @@ class MainMenu extends Phaser.Scene {
         .setOrigin(0.5)
         .setInteractive();
 
-      // Adjust Quit button position
-      this.quitButton.setPosition(centerX, centerY + 180);
+      // Quit Game button
+      this.quitButton = this.add
+        .text(centerX, centerY + 180, "Settings", {
+          fontFamily: "DePixelKlein",
+          fontSize: "32px",
+          resolution: 10
+        })
+        .setTintFill(0xff0000)
+        .setOrigin(0.5)
+        .setInteractive();
 
       // Navigate to Settings scene
       this.settingsButton.on("pointerdown", () => {
