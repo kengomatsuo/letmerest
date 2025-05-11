@@ -2,6 +2,8 @@ class AudioManager extends Phaser.Scene {
   constructor() {
     super({ key: "AudioManager" });
     this.currentMusic = null;
+    this.bgmVolume = 0.6; // Default BGM volume
+    this.sfxVolume = 0.6; // Default SFX volume
   }
 
   preload() {
@@ -57,7 +59,20 @@ class AudioManager extends Phaser.Scene {
           this.currentMusic.stop();
         },
       });
-    })
+    });
+
+    this.registry.events.on("set-bgm-volume", (volume) => {
+      this.bgmVolume = volume;
+      if (this.currentMusic) {
+        this.currentMusic.setVolume(this.bgmVolume);
+      }
+      console.log(`BGM volume set to: ${this.bgmVolume}`);
+    });
+
+    this.registry.events.on("set-sfx-volume", (volume) => {
+      this.sfxVolume = volume;
+      console.log(`SFX volume set to: ${this.sfxVolume}`);
+    });
   }
 
   playMusic(key, fadeDuration = 2000) {
@@ -86,19 +101,24 @@ class AudioManager extends Phaser.Scene {
       // **Tween for fading in new music**
       this.tweens.add({
         targets: newMusic,
-        volume: .6,
+        volume: this.bgmVolume,
         duration: fadeDuration,
       });
     } else {
       console.log("No previous music, playing new track directly.");
       this.tweens.add({
         targets: newMusic,
-        volume: .6,
+        volume: this.bgmVolume,
         duration: fadeDuration,
       });
     }
 
     this.currentMusic = newMusic;
+  }
+
+  playSfx(key) {
+    const sfx = this.sound.add(key, { volume: this.sfxVolume });
+    sfx.play();
   }
 
   toggleMute() {

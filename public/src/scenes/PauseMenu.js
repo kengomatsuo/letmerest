@@ -93,7 +93,7 @@ class PauseMenu extends Phaser.Scene {
 
     this.settingsButton.on("pointerdown", () => {
       this.sound.play("click", { volume: 0.6 });
-      this.scene.start("Settings");
+      this.scene.start("Settings", { previousScene: "PauseMenu" });
     });
 
     this.quitButton.on("pointerdown", () => {

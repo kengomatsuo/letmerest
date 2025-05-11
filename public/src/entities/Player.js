@@ -165,6 +165,26 @@ class Player extends Phaser.GameObjects.Container {
 
     // Call updateFiringAngle in the update method or wherever appropriate
     this.scene.events.on("update", this.updateFiringAngle, this);
+
+    this.movementPaused = false;
+
+    // Listen for pause-game and resume-game events
+    this.scene.registry.events.on("pause-game", () => {
+      this.movementPaused = true;
+      this.body.setVelocity(0);
+      this.playerSprite.play("idle", true);
+    });
+
+    this.scene.registry.events.on("resume-game", () => {
+      this.movementPaused = false;
+    });
+
+    // Update movement logic
+    this.scene.events.on("update", () => {
+      if (!this.movementPaused) {
+        this.move();
+      }
+    });
   }
 
   defineAnimations(scene) {
@@ -196,6 +216,7 @@ class Player extends Phaser.GameObjects.Container {
   }
 
   move() {
+    if (this.movementPaused) return;
     let moveX = 0;
     let moveY = 0;
 

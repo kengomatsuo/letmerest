@@ -37,6 +37,9 @@ class GUI extends Phaser.Scene {
     });
 
     this.input.keyboard.on("keydown-ESC", () => {
+      // Ensure PauseMenu is not triggered from Settings
+      if (this.scene.isActive("Settings")) return;
+
       // If pausemenu scene is not active, start it
       if (!this.scene.isActive("PauseMenu")) {
         this.registry.events.emit("pause-game");
@@ -132,7 +135,7 @@ class GUI extends Phaser.Scene {
   }
 
   createJoystick(pointer) {
-    if (this.joystickActive) return;
+    if (this.joystickActive || this.scene.isActive("PauseMenu") || this.scene.isActive("Settings")) return;
     this.joystickActive = true;
     if (this.player)
     this.player.setJoystickActive(true)
