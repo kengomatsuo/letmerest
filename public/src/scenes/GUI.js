@@ -31,7 +31,7 @@ class GUI extends Phaser.Scene {
     this.player = null;
 
     window.addEventListener("blur", () => {
-      if (this.scene.isActive("PauseMenu")) return;
+      if (this.scene.isActive("PauseMenu") || this.scene.isActive("Settings")) return;
       this.registry.events.emit("pause-game");
       this.sound.play("pauseIn");
     });
