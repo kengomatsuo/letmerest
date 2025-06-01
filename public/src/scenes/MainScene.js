@@ -16,6 +16,7 @@ class MainScene extends Phaser.Scene {
         this.load.atlas('enemy', 'assets/sprites/FolderFloat.png', "assets/sprites/FolderFloat.json");
         this.load.image('projectile', 'assets/sprites/Paper.png');
         this.load.image('pointer', '../../assets/pointer.png');
+        this.load.atlas('face', '../assets/sprites/Expressions.png', '../assets/sprites/Expressions.json');
     }
 
     create() {

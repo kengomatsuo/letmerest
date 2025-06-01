@@ -58,18 +58,23 @@ class GUI extends Phaser.Scene {
       resolution: 10
     });
 
+    // Character face sprite (Top-left, next to name)
+    this.faceSprite = this.add.sprite(10, 40, "face");
+    this.faceSprite.setOrigin(0, 0);
+    this.faceSprite.setScale(1.5);
+
     // Stress bar background (white)
     this.stressBarBg = this.add.graphics();
     this.stressBarBg.fillStyle(0xffffff, 1);
-    this.stressBarBg.fillRect(10, 40, 100, 15);
+    this.stressBarBg.fillRect(65, 40, 100, 15);
 
     // Stress bar foreground (red)
     this.stressBar = this.add.graphics();
     this.stressBar.fillStyle(0x00ff00, 1);
-    this.stressBar.fillRect(10, 40, 0, 15);
+    this.stressBar.fillRect(65, 40, 0, 15);
 
-    // Health text (next to health bar)
-    this.stressText = this.add.text(115, 40, "", {
+    // Stress text (next to stress bar)
+    this.stressText = this.add.text(170, 40, "", {
       fontFamily: "DePixelKlein",
       fontSize: "14px",
       resolution: 10
@@ -77,11 +82,11 @@ class GUI extends Phaser.Scene {
 
     this.procrastinationBarBg = this.add.graphics();
     this.procrastinationBarBg.fillStyle(0xffffff, 1);
-    this.procrastinationBarBg.fillRect(10, 60, 70, 10);
+    this.procrastinationBarBg.fillRect(65, 60, 70, 10);
 
     this.procrastinationBar = this.add.graphics();
     this.procrastinationBar.fillStyle(0x0000ff, 1);
-    this.procrastinationBar.fillRect(10, 60, 0, 10);
+    this.procrastinationBar.fillRect(65, 60, 0, 10);
 
 
     // FPS display (Top-left below health)
