@@ -67,6 +67,12 @@ class Player extends Phaser.GameObjects.Container {
     this.playerSprite = scene.add.sprite(0, 0, "player");
     this.playerSprite.setOrigin(0.5, 0.9);
 
+    // Create the aura sprite (initially invisible)
+    this.auraSprite = scene.add.sprite(0, 0, "aura");
+    this.auraSprite.tint = 0xf00000;
+    this.auraSprite.setOrigin(0.5, 0.9);
+    this.auraSprite.setVisible(false);
+
     // Create the radius indicator
     this.radiusGraphics = scene.add.graphics();
     this.radiusGraphics.lineStyle(2, 0xff0000, 1); // Red outline
@@ -74,6 +80,7 @@ class Player extends Phaser.GameObjects.Container {
     this.radiusGraphics.setVisible(false);
 
     // Add both sprites to this container
+    this.add(this.auraSprite); // Add aura below player
     this.add(this.playerSprite);
     this.add(this.pointerSprite);
     this.add(this.radiusGraphics);
@@ -128,6 +135,12 @@ class Player extends Phaser.GameObjects.Container {
       this.updateShootingSpeed();
       this.panicCooldown = 60;
 
+      // Show and play aura animation
+      this.auraSprite.setVisible(true);
+      this.auraSprite.setScale(5); // Scale the aura
+      this.auraSprite.setAlpha(0.7); // Set aura opacity to 70%
+      this.auraSprite.play("aura-loop");
+
       // disable hitbox collision
       this.pointerHitbox.body.enable = false;
       this.radiusGraphics.setVisible(false);
@@ -151,6 +164,10 @@ class Player extends Phaser.GameObjects.Container {
       this.scene.time.delayedCall(7000, () => {
         this.panic = false;
         this.attackSpeed = 1;
+
+        // Hide aura animation
+        this.auraSprite.setVisible(false);
+        this.auraSprite.stop();
 
         // burnout
         this.burnout = true;
@@ -187,6 +204,10 @@ class Player extends Phaser.GameObjects.Container {
     });
   }
 
+  playSfx(key, options = {}) {
+    this.scene.scene.get("AudioManager").playSfx(key, options);
+  }
+
   defineAnimations(scene) {
     scene.anims.create({
       key: "idle",
@@ -210,6 +231,21 @@ class Player extends Phaser.GameObjects.Container {
         end: 5,
         suffix: ".aseprite",
       }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    // Define aura animation
+    scene.anims.create({
+      key: "aura-loop",
+      frames: [
+        { key: "aura", frame: "aura1" },
+        { key: "aura", frame: "aura2" },
+        { key: "aura", frame: "aura3" },
+        { key: "aura", frame: "aura4" },
+        { key: "aura", frame: "aura5" },
+        { key: "aura", frame: "aura6" },
+      ],
       frameRate: 10,
       repeat: -1,
     });
@@ -279,11 +315,11 @@ class Player extends Phaser.GameObjects.Container {
       (this.stress >= this.stressCap * 0.75 && !this.highStress)
     ) {
       this.highStress = true;
-      this.scene.sound.play("playerHighStress");
+      this.playSfx("playerHighStress");
     }
     // Play hit sound
     if (this.stress < this.stressCap * 0.75) this.highStress = false;
-    this.scene.sound.play("playerHit", {
+    this.playSfx("playerHit", {
       detune: (this.stress / this.stressCap) * 1000,
     });
 
@@ -364,8 +400,7 @@ class Player extends Phaser.GameObjects.Container {
       this.playerHitEnemy
     );
     this.projectiles.add(projectile);
-    this.scene.sound.play("shoot", {
-      volume: 0.6,
+    this.playSfx("shoot", {
       detune: Phaser.Math.Between(-200, 200),
     });
   }

@@ -63,10 +63,12 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   takeDamage(amount, knockback) {
-    this.scene.sound.play("enemyHit", {
-      volume: 0.6,
-      detune: Phaser.Math.Between(-1000, 1000),
-    });
+    // Use AudioManager's playSfx with detune
+    if (this.scene.scene && this.scene.scene.get && this.scene.scene.get("AudioManager")) {
+      this.scene.scene.get("AudioManager").playSfx("enemyHit", {
+        detune: Phaser.Math.Between(-1000, 1000),
+      });
+    }
     this.health -= amount;
 
     if (this.health <= 0) {

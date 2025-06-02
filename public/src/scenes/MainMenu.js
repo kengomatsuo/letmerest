@@ -119,13 +119,13 @@ class MainMenu extends Phaser.Scene {
 
       // Navigate to Settings scene
       this.settingsButton.on("pointerdown", () => {
-        this.sound.play("click", { volume: 0.6 });
+        this.audioManager.playSfx("click");
         this.scene.start("Settings");
       });
 
       // Toggle music when clicked
       this.speakerButton.on("pointerdown", () => {
-        this.sound.play("click", { volume: 0.6 });
+        this.audioManager.playSfx("click");
         if (!this.isMusicPlaying) {
           this.sound.setMute(false);
           this.speakerButton.setText("Sound: on");
@@ -138,7 +138,7 @@ class MainMenu extends Phaser.Scene {
 
       // Start game when clicked
       this.startButton.on("pointerdown", () => {
-        this.sound.play("gameStart");
+        this.audioManager.playSfx("gameStart");
         this.scene.start("GUI");
         this.scene.start("MainScene");
 
@@ -147,7 +147,7 @@ class MainMenu extends Phaser.Scene {
 
       // Quit game (only works in Electron or native app)
       this.quitButton.on("pointerdown", () => {
-        this.sound.play("click", { volume: 0.6 });
+        this.audioManager.playSfx("click");
         if (navigator.userAgent.includes("Electron")) {
           window.close();
         } else {

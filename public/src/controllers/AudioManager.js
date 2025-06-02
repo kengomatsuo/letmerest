@@ -134,7 +134,10 @@ class AudioManager extends Phaser.Scene {
     //     duration: fadeDuration,
     //   });
     // }
-    const newMusic = this.sound.add(key, { loop: true, volume: this.bgmVolume });
+    const newMusic = this.sound.add(key, {
+      loop: true,
+      volume: this.bgmVolume,
+    });
     newMusic.play();
     if (this.currentMusic) {
       const oldMusic = this.currentMusic;
@@ -144,9 +147,15 @@ class AudioManager extends Phaser.Scene {
     this.currentMusic = newMusic;
   }
 
-  playSfx(key) {
-    console.log(`playSfx called for: ${key} at volume ${this.sfxVolume}`);
-    const sfx = this.sound.add(key, { volume: this.sfxVolume });
+  playSfx(key, options = {}) {
+    // Merge default and custom options
+    const config = {
+      ...options,
+      volume: this.sfxVolume,
+    };
+    console.log()
+    console.log(`playSfx called for: ${key} at volume ${config.volume}`);
+    const sfx = this.sound.add(key, config);
     sfx.play();
   }
 

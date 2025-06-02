@@ -1,50 +1,66 @@
 { "frames": {
    "aura1": {
-    "frame": { "x": 0, "y": 0, "w": 32, "h": 32 },
+    "frame": { "x": 0, "y": 0, "w": 24, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
-    "sourceSize": { "w": 32, "h": 32 },
+    "sourceSize": { "w": 24, "h": 32 },
     "duration": 100
    },
     "aura2": {
-      "frame": { "x": 32, "y": 0, "w": 32, "h": 32 },
+      "frame": { "x": 24, "y": 0, "w": 24, "h": 32 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
-      "sourceSize": { "w": 32, "h": 32 },
+      "sourceSize": { "w": 24, "h": 32 },
       "duration": 100
     },
     "aura3": {
-      "frame": { "x": 64, "y": 0, "w": 32, "h": 32 },
+      "frame": { "x": 48, "y": 0, "w": 24, "h": 32 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
-      "sourceSize": { "w": 32, "h": 32 },
+      "sourceSize": { "w": 24, "h": 32 },
       "duration": 100
     },
     "aura4": {
-      "frame": { "x": 96, "y": 0, "w": 32, "h": 32 },
+      "frame": { "x": 72, "y": 0, "w": 24, "h": 32 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
-      "sourceSize": { "w": 32, "h": 32 },
+      "sourceSize": { "w": 24, "h": 32 },
       "duration": 100
     },
     "aura5": {
-      "frame": { "x": 128, "y": 0, "w": 32, "h": 32 },
+      "frame": { "x": 96, "y": 0, "w": 24, "h": 32 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
-      "sourceSize": { "w": 32, "h": 32 },
+      "sourceSize": { "w": 24, "h": 32 },
       "duration": 100
     },
     "aura6": {
-      "frame": { "x": 160, "y": 0, "w": 32, "h": 32 },
+      "frame": { "x": 120, "y": 0, "w": 24, "h": 32 },
       "rotated": false,
       "trimmed": false,
       "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
-      "sourceSize": { "w": 32, "h": 32 },
+      "sourceSize": { "w": 24, "h": 32 },
+      "duration": 100
+    },
+    "aura7": {
+      "frame": { "x": 144, "y": 0, "w": 24, "h": 32 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 24, "h": 32 },
+      "duration": 100
+    },
+    "aura8": {
+      "frame": { "x": 168, "y": 0, "w": 24, "h": 32 },
+      "rotated": false,
+      "trimmed": false,
+      "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
+      "sourceSize": { "w": 24, "h": 32 },
       "duration": 100
     }
  },
@@ -53,7 +69,7 @@
   "version": "1.3.12-arm64",
   "image": "Expressions-sheet.png",
   "format": "RGBA8888",
-  "size": { "w": 320, "h": 64 },
+  "size": { "w": 192, "h": 32 },
   "scale": "1",
   "frameTags": [
   ],
