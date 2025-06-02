@@ -21,7 +21,7 @@ class Player extends Phaser.GameObjects.Container {
     this.panicCooldown = 0;
     this.burnout = false;
 
-    this.detectionRadius = 100;
+    this.detectionRadius = 50;
     this.shield = 0;
     this.speed = 200;
     this.projectiles = scene.add.group();
@@ -58,8 +58,8 @@ class Player extends Phaser.GameObjects.Container {
     // Sync hitbox with pointer movement
     scene.events.on("update", () => {
       this.pointerHitbox.setPosition(
-        this.x - this.detectionRadius / 1.2,
-        this.y - this.detectionRadius / 1.2
+        this.x - this.detectionRadius / 1.5,
+        this.y - this.detectionRadius / 1.5
       );
     });
 
@@ -147,7 +147,7 @@ class Player extends Phaser.GameObjects.Container {
         loop: true,
       });
 
-      // back to normal after 5 seconds
+      // burnt out
       this.scene.time.delayedCall(7000, () => {
         this.panic = false;
         this.attackSpeed = 1;
@@ -271,7 +271,7 @@ class Player extends Phaser.GameObjects.Container {
 
   takeDamage(amount) {
     if (this.damageCooldown) return;
-
+    this.scene.registry.events.emit("player-hurt", amount);
     this.stress = Math.min(this.stress + amount, 100);
 
     if (
@@ -344,11 +344,13 @@ class Player extends Phaser.GameObjects.Container {
       this.procrastinationCap
     );
     this.updateShootingSpeed();
+    this.scene.registry.events.emit("procrastinating", this.procrastination);
   };
 
   playerHitEnemy = (amount) => {
     this.procrastination = Math.max(this.procrastination - amount, 0);
     this.updateShootingSpeed();
+    this.scene.registry.events.emit("procrastination-reduced", this.procrastination);
   };
 
   shoot() {
