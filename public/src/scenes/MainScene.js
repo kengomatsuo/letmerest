@@ -89,7 +89,20 @@ class MainScene extends Phaser.Scene {
         boss.maxSpeed = boss.maxSpeed * 0.6; // Optional: make boss a bit slower
         boss.speed = boss.speed * 0.6;
         // boss.setTint(0xffaa00); // Optional: tint boss for visibility
+
+        // Add boss to group
         this.enemies.add(boss);
+
+        // Hook into boss death to reduce player's stress
+        const originalDie = boss.die.bind(boss);
+        boss.die = () => {
+          // Reduce player's stress by 50% of current value
+          if (this.player && typeof this.player.stress === "number") {
+            this.player.stress -= Math.floor(this.player.stress * 0.5);
+            if (this.player.stress < 0) this.player.stress = 0;
+          }
+          originalDie();
+        };
       },
       loop: true,
     });
