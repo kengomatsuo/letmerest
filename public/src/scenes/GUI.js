@@ -43,6 +43,9 @@ class GUI extends Phaser.Scene {
     });
 
     this.input.keyboard.on("keydown-ESC", () => {
+      if (this.player.stress === this.player.stressCap) {
+        return; // Don't allow pause if player is dead
+      }
       // Ensure PauseMenu is not triggered from Settings
       if (this.scene.isActive("Settings")) return;
 

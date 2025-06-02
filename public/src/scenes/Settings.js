@@ -36,7 +36,12 @@ class Settings extends Phaser.Scene {
 
     const bgmSlider = this.add.rectangle(centerX + 50, centerY, 100, 10, 0x888888)
       .setInteractive();
-    const bgmHandle = this.add.rectangle(centerX + 50, centerY, 16, 16, 0xffffff)
+
+    // Get current BGM volume from registry, fallback to 0.6 if not set
+    const bgmVolume = this.registry.get('bgmVolume') ?? 0.6;
+    const bgmHandleX = bgmSlider.x - 50 + bgmVolume * 100;
+
+    const bgmHandle = this.add.rectangle(bgmHandleX, centerY, 16, 16, 0xffffff)
       .setInteractive();
 
     bgmHandle.on("pointerdown", (pointer) => {
@@ -61,7 +66,12 @@ class Settings extends Phaser.Scene {
 
     const sfxSlider = this.add.rectangle(centerX + 50, centerY + 40, 100, 10, 0x888888)
       .setInteractive();
-    const sfxHandle = this.add.rectangle(centerX + 50, centerY + 40, 16, 16, 0xffffff)
+
+    // Get current SFX volume from registry, fallback to 0.6 if not set
+    const sfxVolume = this.registry.get('sfxVolume') ?? 0.6;
+    const sfxHandleX = sfxSlider.x - 50 + sfxVolume * 100;
+
+    const sfxHandle = this.add.rectangle(sfxHandleX, centerY + 40, 16, 16, 0xffffff)
       .setInteractive();
 
     sfxHandle.on("pointerdown", (pointer) => {

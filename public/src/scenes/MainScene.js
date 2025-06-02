@@ -79,6 +79,9 @@ class MainScene extends Phaser.Scene {
     this.registry.events.on("start-game", () => {
       this.timer = 0;
       this.time.paused = false;
+      console.log(this.player)
+      this.player.setActive(true);
+      this.player.body.enable = false;
     });
 
     this.registry.events.on("pause-game", () => {

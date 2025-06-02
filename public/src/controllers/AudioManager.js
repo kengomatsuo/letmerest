@@ -11,43 +11,59 @@ class AudioManager extends Phaser.Scene {
       "assets/music/Hectic_bass_drums.ogg",
       "assets/music/Hectic_bass_drums.mp3",
     ]);
-    this.load.audio("click", "assets/sounds/Click.mp3")
-    this.load.audio("gameStart", "assets/sounds/Game_Start.mp3")
+    this.load.audio("click", "assets/sounds/Click.mp3");
+    this.load.audio("gameStart", "assets/sounds/Game_Start.mp3");
     this.load.audio("gameBgm", [
       "assets/music/Hectic.ogg",
       "assets/music/Hectic.mp3",
     ]);
-    this.load.audio("pauseIn", "assets/sounds/Pause_In.mp3")
-    this.load.audio("pauseOut", "assets/sounds/Pause_Out.mp3")
-    this.load.audio("playerHit", "assets/sounds/Hit.mp3")
-    this.load.audio("playerHighStress", "assets/sounds/High_Stress.mp3")
-    this.load.audio("point", "assets/sounds/Coin.mp3")
-    this.load.audio("shoot", "assets/sounds/Paper.mp3")
-    this.load.audio("enemyHit", "assets/sounds/Enemy_Hit.mp3")
+    this.load.audio("pauseIn", "assets/sounds/Pause_In.mp3");
+    this.load.audio("pauseOut", "assets/sounds/Pause_Out.mp3");
+    this.load.audio("playerHit", "assets/sounds/Hit.mp3");
+    this.load.audio("playerHighStress", "assets/sounds/High_Stress.mp3");
+    this.load.audio("point", "assets/sounds/Coin.mp3");
+    this.load.audio("shoot", "assets/sounds/Paper.mp3");
+    this.load.audio("enemyHit", "assets/sounds/Enemy_Hit.mp3");
   }
 
   create() {
     this.sound.pauseOnBlur = false; // ✅ Prevents audio from stopping on window blur
     console.log("AudioManager created");
-    this.registry.events.on("start-game", () => {
-      console.log("Start-game event received");
-      this.playMusic("gameBgm");
-    }, this);
+    this.registry.events.on(
+      "start-game",
+      () => {
+        console.log("Start-game event received");
+        this.playMusic("gameBgm");
+      },
+      this
+    );
 
-    this.registry.events.on("pause-game", () => {
-      this.playMusic("mainMenuBgm");
-      console.log("Pause-game event received");
-    }, this);
+    this.registry.events.on(
+      "pause-game",
+      () => {
+        this.playMusic("mainMenuBgm");
+        console.log("Pause-game event received");
+      },
+      this
+    );
 
-    this.registry.events.on("main-menu", () => {
-      console.log("Main-menu event received");
-      this.playMusic("mainMenuBgm");
-    }, this);
+    this.registry.events.on(
+      "main-menu",
+      () => {
+        console.log("Main-menu event received");
+        this.playMusic("mainMenuBgm");
+      },
+      this
+    );
 
-    this.registry.events.on("resume-game", () => {
-      console.log("Resume-game event received");
-      this.playMusic("gameBgm", 4000);
-    }, this);
+    this.registry.events.on(
+      "resume-game",
+      () => {
+        console.log("Resume-game event received");
+        this.playMusic("gameBgm", 4000);
+      },
+      this
+    );
 
     this.registry.events.on("game-over", () => {
       // Add tweens to decrease music rate and stop it
@@ -66,16 +82,23 @@ class AudioManager extends Phaser.Scene {
       if (this.currentMusic) {
         this.currentMusic.setVolume(this.bgmVolume);
       }
+      this.registry.set("bgmVolume", this.bgmVolume); // <-- Save to registry!
+
       console.log(`BGM volume set to: ${this.bgmVolume}`);
     });
 
     this.registry.events.on("set-sfx-volume", (volume) => {
       this.sfxVolume = volume;
+      this.registry.set("sfxVolume", this.sfxVolume); // <-- Save to registry!
       console.log(`SFX volume set to: ${this.sfxVolume}`);
     });
   }
 
   playMusic(key, fadeDuration = 2000) {
+    if (this.bgmVolume <= 0) {
+      console.log("BGM volume is 0, not playing music.");
+      return;
+    }
     console.log(`playMusic called for: ${key}`);
 
     const newMusic = this.sound.add(key, { loop: true, volume: 0 });
@@ -86,7 +109,7 @@ class AudioManager extends Phaser.Scene {
       newMusic.seek = oldMusic.seek; // Sync playback time
       // console.log(oldMusic, newMusic);
       console.log("Crossfade started");
-      oldMusic.setVolume(0.6);
+      oldMusic.setVolume(this.bgmVolume);
       // **Tween for fading out old music**
       this.tweens.add({
         targets: oldMusic,
