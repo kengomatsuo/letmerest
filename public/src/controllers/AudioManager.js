@@ -26,6 +26,7 @@ class AudioManager extends Phaser.Scene {
     this.load.audio("enemyHit", "assets/sounds/Enemy_Hit.mp3");
     this.load.audio("panic", "assets/sounds/Panic.mp3");
     this.load.audio("burnout", "assets/sounds/Burnout.mp3");
+    this.load.audio("skillReady", "assets/sounds/Skill_Ready.mp3");
   }
 
   create() {

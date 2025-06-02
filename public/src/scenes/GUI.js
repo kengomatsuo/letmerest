@@ -411,12 +411,21 @@ class GUI extends Phaser.Scene {
         const gray = Math.floor(80 + percent * 120); // from dark to lighter gray
         const color = (gray << 16) | (gray << 8) | gray;
 
+        // Track if skill was ready last frame
+        this._panicSkillWasReady = false;
+
         this.panicCooldownBar.clear();
         this.panicCooldownBar.fillStyle(color, 1);
         this.panicCooldownBar.fillRect(75, 75, barWidth, 14);
         this.panicCooldownBar.setVisible(true);
         this.panicCooldownBarBg.setVisible(true);
       } else {
+        // Play skillReady SFX only once when cooldown just finished
+        if (!this._panicSkillWasReady) {
+          this.playSfx("skillReady");
+          this._panicSkillWasReady = true;
+        }
+
         // When full and ready, cycle RGB
         const t = this.time.now / 400;
         const r = Math.floor(127 * Math.sin(t) + 128);
