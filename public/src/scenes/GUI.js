@@ -95,6 +95,7 @@ class GUI extends Phaser.Scene {
       resolution: 10,
     });
 
+    // Procrastination bar (already present)
     this.procrastinationBarBg = this.add.graphics();
     this.procrastinationBarBg.fillStyle(0xffffff, 1);
     this.procrastinationBarBg.fillRect(75, 60, 70, 10);
@@ -102,6 +103,15 @@ class GUI extends Phaser.Scene {
     this.procrastinationBar = this.add.graphics();
     this.procrastinationBar.fillStyle(0x0000ff, 1);
     this.procrastinationBar.fillRect(75, 60, 0, 10);
+
+    // --- Panic Cooldown Indicator ---
+    this.panicCooldownBarBg = this.add.graphics();
+    this.panicCooldownBarBg.fillStyle(0xffffff, 1);
+    this.panicCooldownBarBg.fillRect(75, 75, 85, 14);
+
+    this.panicCooldownBar = this.add.graphics();
+    this.panicCooldownBar.fillStyle(0xffa500, 1);
+    this.panicCooldownBar.fillRect(75, 75, 0, 14);
 
     // FPS display (Top-left below health)
     this.fpsText = this.add.text(10, 110, "", {
@@ -388,6 +398,38 @@ class GUI extends Phaser.Scene {
       this.procrastinationBar.fillRect(75, 60, procrastinationBarWidth, 10);
 
       this.stressText.setText(stress);
+
+      // --- Update Panic Cooldown Indicator ---
+      if (this.player.panicCooldown > 0) {
+        const maxCooldown = 60; // Match Player.js
+
+        // Calculate fill percent (fill up instead of emptying)
+        const percent = 1 - (this.player.panicCooldown / maxCooldown);
+        const barWidth = percent * 85;
+
+        // Shade of gray while filling up
+        const gray = Math.floor(80 + percent * 120); // from dark to lighter gray
+        const color = (gray << 16) | (gray << 8) | gray;
+
+        this.panicCooldownBar.clear();
+        this.panicCooldownBar.fillStyle(color, 1);
+        this.panicCooldownBar.fillRect(75, 75, barWidth, 14);
+        this.panicCooldownBar.setVisible(true);
+        this.panicCooldownBarBg.setVisible(true);
+      } else {
+        // When full and ready, cycle RGB
+        const t = this.time.now / 400;
+        const r = Math.floor(127 * Math.sin(t) + 128);
+        const g = Math.floor(127 * Math.sin(t + 2) + 128);
+        const b = Math.floor(127 * Math.sin(t + 4) + 128);
+        const color = (r << 16) | (g << 8) | b;
+
+        this.panicCooldownBar.clear();
+        this.panicCooldownBar.fillStyle(color, 1);
+        this.panicCooldownBar.fillRect(75, 75, 85, 14);
+        this.panicCooldownBar.setVisible(true);
+        this.panicCooldownBarBg.setVisible(true);
+      }
     }
   }
 }
