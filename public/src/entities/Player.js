@@ -146,15 +146,24 @@ class Player extends Phaser.GameObjects.Container {
       this.pointerHitbox.body.enable = false;
       this.radiusGraphics.setVisible(false);
 
-      this.scene.time.addEvent({
+      // Prevent stacking: clear any existing panicCooldownEvent
+      if (this.panicCooldownEvent) {
+        this.panicCooldownEvent.remove();
+      }
+      this.panicCooldownEvent = this.scene.time.addEvent({
         delay: 1000, // 1 second
         callback: () => {
           if (this.panicCooldown > 0) {
-            this.panicCooldown--;
-            console.log(`Panic Cooldown: ${this.panicCooldown}`);
+        this.panicCooldown--;
+        console.log(`Panic Cooldown: ${this.panicCooldown}`);
           }
           if (this.panicCooldown === 0) {
-            this.pointerHitbox.body.enable = true;
+        this.pointerHitbox.body.enable = true;
+        // Stop the event once cooldown is done
+        if (this.panicCooldownEvent) {
+          this.panicCooldownEvent.remove();
+          this.panicCooldownEvent = null;
+        }
           }
         },
         callbackScope: this,
