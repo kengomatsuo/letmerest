@@ -94,48 +94,53 @@ class AudioManager extends Phaser.Scene {
     });
   }
 
-  playMusic(key, fadeDuration = 2000) {
+  playMusic(key, fadeDuration = 300) {
     if (this.bgmVolume <= 0) {
       console.log("BGM volume is 0, not playing music.");
       return;
     }
     console.log(`playMusic called for: ${key}`);
 
-    const newMusic = this.sound.add(key, { loop: true, volume: 0 });
+    // const newMusic = this.sound.add(key, { loop: true, volume: 0 });
+    // newMusic.play();
+    // // console.log(this.currentMusic)
+    // if (this.currentMusic) {
+    //   const oldMusic = this.currentMusic;
+    //   newMusic.seek = oldMusic.seek; // Sync playback time
+    //   // console.log(oldMusic, newMusic);
+    //   console.log("Crossfade started");
+    //   // **Tween for fading out old music**
+    //   this.tweens.add({
+    //     targets: oldMusic,
+    //     volume: 0,
+    //     duration: fadeDuration,
+    //     onComplete: () => {
+    //       console.log("Old music stopped.");
+    //       oldMusic.stop();
+    //     },
+    //   });
+
+    //   // **Tween for fading in new music**
+    //   this.tweens.add({
+    //     targets: newMusic,
+    //     volume: this.bgmVolume,
+    //     duration: fadeDuration,
+    //   });
+    // } else {
+    //   console.log("No previous music, playing new track directly.");
+    //   this.tweens.add({
+    //     targets: newMusic,
+    //     volume: this.bgmVolume,
+    //     duration: fadeDuration,
+    //   });
+    // }
+    const newMusic = this.sound.add(key, { loop: true, volume: this.bgmVolume });
     newMusic.play();
-    // console.log(this.currentMusic)
     if (this.currentMusic) {
       const oldMusic = this.currentMusic;
       newMusic.seek = oldMusic.seek; // Sync playback time
-      // console.log(oldMusic, newMusic);
-      console.log("Crossfade started");
-      oldMusic.setVolume(this.bgmVolume);
-      // **Tween for fading out old music**
-      this.tweens.add({
-        targets: oldMusic,
-        volume: 0,
-        duration: fadeDuration,
-        onComplete: () => {
-          console.log("Old music stopped.");
-          oldMusic.stop();
-        },
-      });
-
-      // **Tween for fading in new music**
-      this.tweens.add({
-        targets: newMusic,
-        volume: this.bgmVolume,
-        duration: fadeDuration,
-      });
-    } else {
-      console.log("No previous music, playing new track directly.");
-      this.tweens.add({
-        targets: newMusic,
-        volume: this.bgmVolume,
-        duration: fadeDuration,
-      });
+      oldMusic.stop();
     }
-
     this.currentMusic = newMusic;
   }
 
