@@ -131,7 +131,7 @@ class GUI extends Phaser.Scene {
 
     // Score display (Top-center below timer)
     this.scoreText = this.add
-      .text(centerX, 40, "Score: 0", {
+      .text(centerX, 50, "Score: 0", {
         fontFamily: "DePixelKlein",
         fontSize: "20px",
         resolution: 10,
@@ -367,7 +367,7 @@ class GUI extends Phaser.Scene {
     this.timerText.setPosition(centerX, 10);
 
     // Reposition score (Top-center below timer)
-    this.scoreText.setPosition(centerX, 40);
+    this.scoreText.setPosition(centerX, 50);
 
     // If game over text exists, reposition it
     if (this.gameOverText) {

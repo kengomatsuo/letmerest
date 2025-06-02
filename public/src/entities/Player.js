@@ -129,6 +129,7 @@ class Player extends Phaser.GameObjects.Container {
 
     // on register event panic increase attack speed by 3x and set procrastination to 0
     this.scene.registry.events.on("panic", () => {
+      this.playSfx("panic");
       this.panic = true;
       this.attackSpeed = 4;
       this.procrastination = 0;
@@ -171,6 +172,7 @@ class Player extends Phaser.GameObjects.Container {
 
         // burnout
         this.burnout = true;
+        this.playSfx("burnout")
         this.updateShootingSpeed();
       });
 
