@@ -98,7 +98,7 @@ class MainScene extends Phaser.Scene {
         boss.die = () => {
           // Reduce player's stress by 50% of current value
           if (this.player && typeof this.player.stress === "number") {
-            this.player.stress -= Math.floor(this.player.stress * 0.5);
+            this.player.heal(Math.floor(this.player.stress * 0.5));
             if (this.player.stress < 0) this.player.stress = 0;
             // Play heal SFX
             if (this.scene && this.scene.get("AudioManager")) {

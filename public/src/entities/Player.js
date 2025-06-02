@@ -69,7 +69,7 @@ class Player extends Phaser.GameObjects.Container {
 
     // Create the aura sprite (initially invisible)
     this.auraSprite = scene.add.sprite(0, 0, "aura");
-    this.auraSprite.tint = 0xf00000;
+    this.auraSprite.tint = 0x500000;
     this.auraSprite.setOrigin(0.5, 0.9);
     this.auraSprite.setVisible(false);
 
@@ -316,10 +316,33 @@ class Player extends Phaser.GameObjects.Container {
     }
   }
 
+  showFloatingText(amount, color = "#ff0000") {
+    const text = this.scene.add.text(this.x, this.y - 40, `${amount > 0 ? "+" : ""}${amount}`, {
+      fontSize: "28px",
+      fontFamily: "DePixelKlein",
+      fontStyle: "bold",
+      color: color,
+      stroke: "#000",
+      strokeThickness: 3,
+    }).setOrigin(0.5);
+
+    this.scene.tweens.add({
+      targets: text,
+      y: text.y - 40,
+      alpha: 0,
+      duration: 1500,
+      ease: "Cubic.easeOut",
+      onComplete: () => text.destroy(),
+    });
+  }
+
   takeDamage(amount) {
     if (this.damageCooldown) return;
     this.scene.registry.events.emit("player-hurt", amount);
     this.stress = Math.min(this.stress + amount, 100);
+
+    // Show floating damage text in red
+    this.showFloatingText(-amount, "#ff0000");
 
     if (
       this.stress >= this.stressCap * 0.9 ||
@@ -351,6 +374,8 @@ class Player extends Phaser.GameObjects.Container {
 
   heal(amount) {
     this.stress = Math.max(this.stress - amount, 0);
+    // Show floating heal text in green
+    this.showFloatingText(amount, "#00ff00");
   }
 
   die() {
