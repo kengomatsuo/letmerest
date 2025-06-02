@@ -67,6 +67,33 @@ class MainScene extends Phaser.Scene {
       loop: true,
     });
 
+    // --- Boss spawn every 1 minute ---
+    this.time.addEvent({
+      delay: 60000, // 1 minute in ms
+      callback: () => {
+        // Get player's position
+        const playerX = this.player.x;
+        const playerY = this.player.y;
+
+        // Pick a random angle in radians (0 to 2π)
+        const angle = Phaser.Math.FloatBetween(0, Math.PI * 2);
+
+        // Calculate spawn position 1000 pixels away
+        const spawnX = playerX + Math.cos(angle) * 500;
+        const spawnY = playerY + Math.sin(angle) * 500;
+
+        // Create a giant enemy as boss
+        const boss = new Enemy(this, spawnX, spawnY);
+        boss.setScale(5); // Make it giant
+        boss.health *= 50; // 50x health
+        boss.maxSpeed = boss.maxSpeed * 0.6; // Optional: make boss a bit slower
+        boss.speed = boss.speed * 0.6;
+        // boss.setTint(0xffaa00); // Optional: tint boss for visibility
+        this.enemies.add(boss);
+      },
+      loop: true,
+    });
+
     // Update game timer every second
     this.time.addEvent({
       delay: 1000,
