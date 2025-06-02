@@ -3,6 +3,10 @@ class Settings extends Phaser.Scene {
     super({ key: "Settings" });
   }
 
+  playSfx(key) {
+    this.scene.get("AudioManager").playSfx(key);
+  }
+
   init(data) {
     this.previousScene = data.previousScene || "MainMenu";
   }
@@ -100,13 +104,13 @@ class Settings extends Phaser.Scene {
 
     // Navigate back to the previous scene
     this.backButton.on("pointerdown", () => {
-      this.sound.play("click", { volume: 0.6 });
+      this.playSfx("click");
       this.scene.start(this.previousScene);
     });
 
     // Listen for ESC key to return to the previous scene
     this.input.keyboard.on("keydown-ESC", () => {
-      this.sound.play("click", { volume: 0.6 });
+      this.playSfx("click");
       this.scene.start(this.previousScene);
     });
 

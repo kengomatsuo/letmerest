@@ -5,6 +5,10 @@ class GUI extends Phaser.Scene {
     this.isVibrating = false; // Track if the health bar is currently vibrating
   }
 
+  playSfx(key) {
+    this.scene.get("AudioManager").playSfx(key);
+  }
+
   preload() {
     // Load assets
     this.load.atlas(
@@ -39,7 +43,7 @@ class GUI extends Phaser.Scene {
       if (this.scene.isActive("PauseMenu") || this.scene.isActive("Settings"))
         return;
       this.registry.events.emit("pause-game");
-      this.sound.play("pauseIn");
+      this.playSfx("pauseIn");
     });
 
     this.input.keyboard.on("keydown-ESC", () => {
@@ -52,10 +56,10 @@ class GUI extends Phaser.Scene {
       // If pausemenu scene is not active, start it
       if (!this.scene.isActive("PauseMenu")) {
         this.registry.events.emit("pause-game");
-        this.sound.play("pauseIn");
+        this.playSfx("pauseIn");
       } else {
         this.registry.events.emit("resume-game");
-        this.sound.play("pauseOut");
+        this.playSfx("pauseOut");
         this.scene.stop("PauseMenu");
       }
     });
@@ -205,7 +209,7 @@ class GUI extends Phaser.Scene {
     // Listen for score updates
     this.registry.events.on("update-score", (value) => {
       this.score += value;
-      if (value > 0) this.sound.play("point", { volume: 0.6 });
+      if (value > 0) this.playSfx("point");
       this.scoreText.setText(`Score: ${this.score}`);
     });
 

@@ -145,6 +145,7 @@ class AudioManager extends Phaser.Scene {
   }
 
   playSfx(key) {
+    console.log(`playSfx called for: ${key} at volume ${this.sfxVolume}`);
     const sfx = this.sound.add(key, { volume: this.sfxVolume });
     sfx.play();
   }

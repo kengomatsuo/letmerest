@@ -3,6 +3,10 @@ class PauseMenu extends Phaser.Scene {
     super({ key: "PauseMenu" });
   }
 
+  playSfx(key) {
+    this.scene.get("AudioManager").playSfx(key);
+  }
+
   create() {
     this.createUI();
 
@@ -76,28 +80,28 @@ class PauseMenu extends Phaser.Scene {
 
     // Add interactivity
     this.resumeButton.on("pointerdown", () => {
-      this.sound.play("click", { volume: 0.6 });
+      this.playSfx("click");
       this.resumeGame();
     });
     this.input.keyboard.on("keydown-ESC", () => {
-      this.sound.play("click", { volume: 0.6 });
+      this.playSfx("click");
       this.resumeGame();
     });
 
     this.restartButton.on("pointerdown", () => {
-      this.sound.play("click", { volume: 0.6 });
+      this.playSfx("click");
 
       this.registry.events.emit("start-game");
       this.restartGame();
     });
 
     this.settingsButton.on("pointerdown", () => {
-      this.sound.play("click", { volume: 0.6 });
+      this.playSfx("click");
       this.scene.start("Settings", { previousScene: "PauseMenu" });
     });
 
     this.quitButton.on("pointerdown", () => {
-      this.sound.play("click", { volume: 0.6 });
+      this.playSfx("click");
       this.quitToMainMenu();
     });
   }
