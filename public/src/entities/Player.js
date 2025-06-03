@@ -80,10 +80,10 @@ class Player extends Phaser.GameObjects.Container {
     this.radiusGraphics.setVisible(false);
 
     // Add both sprites to this container
-    this.add(this.auraSprite); // Add aura below player
-    this.add(this.playerSprite);
-    this.add(this.pointerSprite);
-    this.add(this.radiusGraphics);
+    this.add(this.radiusGraphics);      // Add radius indicator first (bottom-most)
+    this.add(this.auraSprite);          // Then aura
+    this.add(this.playerSprite);        // Then player
+    this.add(this.pointerSprite);       // Then pointer
 
     // Define animations
     this.defineAnimations(scene);
