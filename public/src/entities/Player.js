@@ -381,6 +381,9 @@ class Player extends Phaser.GameObjects.Container {
   die() {
     this.scene.registry.events.emit("game-over");
 
+    // Set player sprite tint to black on death
+    this.playerSprite.setTintFill(0x000000);
+
     // Remove pointer movement event
     this.scene.input.off("pointermove");
   }
