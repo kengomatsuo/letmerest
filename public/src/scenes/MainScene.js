@@ -85,7 +85,7 @@ class MainScene extends Phaser.Scene {
         // Create a giant enemy as boss
         const boss = new Enemy(this, spawnX, spawnY);
         boss.setScale(5); // Make it giant
-        boss.health *= 50; // 50x health
+        boss.health *= 10; // 50x health
         boss.maxSpeed = boss.maxSpeed * 0.6; // Optional: make boss a bit slower
         boss.speed = boss.speed * 0.6;
         // boss.setTint(0xffaa00); // Optional: tint boss for visibility
