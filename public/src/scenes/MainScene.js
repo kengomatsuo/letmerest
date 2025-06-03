@@ -126,6 +126,7 @@ class MainScene extends Phaser.Scene {
       console.log(this.player)
       this.player.setActive(true);
       this.player.body.enable = false;
+      this.physics.resume();
     });
 
     this.registry.events.on("pause-game", () => {
@@ -147,8 +148,8 @@ class MainScene extends Phaser.Scene {
       // Stop player
       if (this.player) {
         this.player.body.setVelocity(0);
-        this.player.setActive(false);
-        this.player.body.enable = false;
+        // this.player.setActive(false);
+        // this.player.body.enable = false;
       }
 
       // Stop enemies

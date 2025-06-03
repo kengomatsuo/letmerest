@@ -95,7 +95,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   showFloatingText(amount, color = "#ffffff") {
-    const text = this.scene.add.text(this.x, this.y - 40, `${amount > 0 ? "+" : ""}${amount}`, {
+    const text = this.scene.add.text(this.x, this.y - 40, amount, {
       fontSize: "28px",
       fontFamily: "DePixelKlein",
       fontStyle: "bold",
