@@ -71,6 +71,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     }
     this.health -= amount;
 
+    // Show floating damage text in white
+    this.showFloatingText(amount, "#ffffff");
+
     if (this.health <= 0) {
       this.die();
     } else {
@@ -89,6 +92,26 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
         });
       }
     }
+  }
+
+  showFloatingText(amount, color = "#ffffff") {
+    const text = this.scene.add.text(this.x, this.y - 40, `${amount > 0 ? "+" : ""}${amount}`, {
+      fontSize: "28px",
+      fontFamily: "DePixelKlein",
+      fontStyle: "bold",
+      color: color,
+      stroke: "#000",
+      strokeThickness: 3,
+    }).setOrigin(0.5);
+
+    this.scene.tweens.add({
+      targets: text,
+      y: text.y - 40,
+      alpha: 0,
+      duration: 1500,
+      ease: "Cubic.easeOut",
+      onComplete: () => text.destroy(),
+    });
   }
 
   die() {
